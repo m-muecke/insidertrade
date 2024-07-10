@@ -3,6 +3,8 @@
 
 # insidertrade
 
+The aim of the package will be to analyse the SEC insider trading data.
+
 <!-- badges: start -->
 
 [![Lifecycle:
