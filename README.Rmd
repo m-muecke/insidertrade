@@ -22,6 +22,15 @@ options(tibble.print_min = 5L, tibble.print_max = 5L)
 
 The aim of the package will be to analyse the SEC insider trading data.
 
+## Notes
+
+* EDGAR API docs: <https://www.sec.gov/search-filings/edgar-application-programming-interfaces>
+
 ## Related work
 
 * [insiderTrades](https://github.com/US-Department-of-the-Treasury/insiderTrades)
+* <https://github.com/sewardlee337/finreportr>
+* <https://github.com/mwaldstein/edgarWebR>
+* <https://github.com/bergant/finstr>
+* <https://cran.r-project.org/package=tidyedgar>
+* <https://cran.r-project.org/package=XBRL>
