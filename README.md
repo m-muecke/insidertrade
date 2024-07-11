@@ -19,8 +19,8 @@ The aim of the package will be to analyse the SEC insider trading data.
 ## Related work
 
 - [insiderTrades](https://github.com/US-Department-of-the-Treasury/insiderTrades)
-- <https://github.com/sewardlee337/finreportr>
-- <https://github.com/mwaldstein/edgarWebR>
-- <https://github.com/bergant/finstr>
-- <https://cran.r-project.org/package=tidyedgar>
-- <https://cran.r-project.org/package=XBRL>
+- [finreportr](https://github.com/sewardlee337/finreportr)
+- [edgarWebR](https://github.com/mwaldstein/edgarWebR)
+- [finstr](https://github.com/bergant/finstr)
+- [tidyedgar](https://cran.r-project.org/package=tidyedgar)
+- [XBRL](https://cran.r-project.org/package=XBRL)
