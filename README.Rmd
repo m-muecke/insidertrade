@@ -64,12 +64,10 @@ buys <- trans[
 # top 10 companies by number of distinct insider buyers
 buys[, value := trans_shares * trans_pricepershare]
 top <- buys[,
-  .(
-    n_insiders = uniqueN(rptownercik),
-    total_usd = sum(value, na.rm = TRUE)
-  ),
+  .(n_insiders = uniqueN(rptownercik), total_usd = sum(value, na.rm = TRUE)),
   by = .(ticker = issuertradingsymbol, company = issuername)
-][order(-n_insiders, -total_usd)]
+]
+setorder(top, -n_insiders, -total_usd)
 head(top, 10)
 
 # plot insider purchases over the quarter
