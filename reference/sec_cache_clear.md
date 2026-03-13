@@ -1,7 +1,6 @@
 # Clear the cache
 
-Deletes all cached ZIP files downloaded by
-[`sec_form345()`](https://m-muecke.github.io/insidertrade/reference/sec_form345.md).
+Deletes all cached files, including bulk data ZIPs and API responses.
 
 ## Usage
 

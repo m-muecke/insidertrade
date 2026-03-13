@@ -44,6 +44,7 @@ is returned.
 ## See also
 
 Other bulk data:
+[`sec_transaction_codes()`](https://m-muecke.github.io/insidertrade/reference/sec_transaction_codes.md),
 [`sec_transactions()`](https://m-muecke.github.io/insidertrade/reference/sec_transactions.md)
 
 ## Examples

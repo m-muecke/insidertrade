@@ -36,7 +36,8 @@ information.
 ## See also
 
 Other bulk data:
-[`sec_form345()`](https://m-muecke.github.io/insidertrade/reference/sec_form345.md)
+[`sec_form345()`](https://m-muecke.github.io/insidertrade/reference/sec_form345.md),
+[`sec_transaction_codes()`](https://m-muecke.github.io/insidertrade/reference/sec_transaction_codes.md)
 
 ## Examples
 
