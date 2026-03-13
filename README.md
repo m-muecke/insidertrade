@@ -38,50 +38,51 @@ library(data.table)
 library(insidertrade)
 
 # download and parse all Form 3/4/5 tables for Q2 2024
-data <- sec_form345(2024, 2)
+data <- sec_form345(2025, 4)
 str(lapply(data, dim))
 #> List of 8
-#>  $ deriv_holding   : int [1:2] 9416 26
-#>  $ deriv_trans     : int [1:2] 28048 42
-#>  $ footnotes       : int [1:2] 116519 3
-#>  $ nonderiv_holding: int [1:2] 21166 14
-#>  $ nonderiv_trans  : int [1:2] 69412 28
-#>  $ owner_signature : int [1:2] 56261 3
-#>  $ reportingowner  : int [1:2] 56838 13
-#>  $ submission      : int [1:2] 52802 14
+#>  $ deriv_holding   : int [1:2] 8223 26
+#>  $ deriv_trans     : int [1:2] 20439 42
+#>  $ footnotes       : int [1:2] 88855 3
+#>  $ nonderiv_holding: int [1:2] 17521 14
+#>  $ nonderiv_trans  : int [1:2] 59678 28
+#>  $ owner_signature : int [1:2] 39295 3
+#>  $ reportingowner  : int [1:2] 39602 13
+#>  $ submission      : int [1:2] 36421 14
 
 # get transactions joined with submission and owner details
-trans <- sec_transactions(2024, 2)
+trans <- sec_transactions(2025, 4)
 
 # filter to open-market purchases by officers and directors
 buys <- trans[
   trans_code == "P" &
     grepl("Officer|Director", rptowner_relationship) &
-    trans_date >= "2024-04-01" &
-    trans_date <= "2024-06-30"
+    trans_date >= "2025-10-01" &
+    trans_date <= "2025-12-31"
 ]
 
 # top 10 companies by number of distinct insider buyers
+buys[, value := trans_shares * trans_pricepershare]
 top <- buys[,
   .(
     n_insiders = uniqueN(rptownercik),
-    total_shares = sum(trans_shares, na.rm = TRUE)
+    total_usd = sum(value, na.rm = TRUE)
   ),
   by = .(ticker = issuertradingsymbol, company = issuername)
-][order(-n_insiders, -total_shares)]
+][order(-n_insiders, -total_usd)]
 head(top, 10)
-#>     ticker                       company n_insiders total_shares
-#>     <char>                        <char>      <int>        <num>
-#>  1:    ULS             UL Solutions Inc.         22    590669.00
-#>  2:   UUUU              ENERGY FUELS INC         15     74135.00
-#>  3:    SPG SIMON PROPERTY GROUP INC /DE/         11      2198.00
-#>  4:   BCRX  BIOCRYST PHARMACEUTICALS INC         10    183601.00
-#>  5:    LAB        STANDARD BIOTOOLS INC.          9  18468648.00
-#>  6:    CRM              Salesforce, Inc.          9   3426051.00
-#>  7:   None      Kayne Anderson BDC, Inc.          9    522124.55
-#>  8:   GNLX                  GENELUX Corp          9    268000.00
-#>  9:   NFBK      Northfield Bancorp, Inc.          9     75851.00
-#> 10:   GHLD             Guild Holdings Co          9     19903.79
+#>         ticker                           company n_insiders total_usd
+#>         <char>                            <char>      <int>     <num>
+#>  1:        CBC          Central Bancompany, Inc.         17   5104827
+#>  2:       MTDR              Matador Resources Co         13   1522756
+#>  3:        VAC MARRIOTT VACATIONS WORLDWIDE Corp         12  18231582
+#>  4:       HYNE               Hoyne Bancorp, Inc.         10   2428916
+#>  5:        OBK              Origin Bancorp, Inc.         10   1023669
+#>  6:        CRM                  Salesforce, Inc.          9 200626167
+#>  7:        LAB            STANDARD BIOTOOLS INC.          8 115266000
+#>  8:       ZBIO             Zenas BioPharma, Inc.          8  33252661
+#>  9:        XZO                 Exzeo Group, Inc.          8   2527329
+#> 10: HEI, HEI.A                        HEICO CORP          8   1416726
 
 # plot insider purchases over the quarter
 library(ggplot2)
@@ -103,7 +104,7 @@ ggplot(daily, aes(x = trans_date, y = n_purchases)) +
     axis.text = element_text(color = "black"),
     axis.title = element_blank()
   ) +
-  labs(title = "Daily Insider Purchases (Q2 2024)")
+  labs(title = "Daily Insider Purchases (Q4 2025)")
 ```
 
 <img src="man/figures/README-demo-1.png" alt="" width="100%" />
