@@ -1,0 +1,23 @@
+url: https://m-muecke.github.io/insidertrade/
+
+template:
+  bootstrap: 5
+
+reference:
+- title: Bulk data
+  desc: Download and parse SEC Form 3/4/5 quarterly bulk data sets.
+  contents:
+  - sec_form345
+  - sec_transactions
+
+- title: EDGAR API
+  desc: Query the SEC EDGAR submissions API.
+  contents:
+  - edgar_submissions
+  - edgar_insider_filings
+
+- title: Cache
+  desc: Manage the local file cache.
+  contents:
+  - sec_cache_dir
+  - sec_cache_clear

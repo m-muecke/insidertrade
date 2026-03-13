@@ -4,8 +4,22 @@ Version: 0.0.0.9000
 Authors@R:
     person("Maximilian", "Muecke", , "muecke.maximilian@gmail.com", role = c("aut", "cre"),
            comment = c(ORCID = "0009-0000-9432-9795"))
+Description: Download and parse SEC insider trading data (Forms 3/4/5) from quarterly bulk
+    data sets and the EDGAR submissions API.
+License: MIT + file LICENSE
 Depends:
     R (>= 4.1.0)
+Imports:
+    curl,
+    data.table,
+    httr2 (>= 1.0.0)
+Suggests:
+    testthat (>= 3.0.0),
+    withr
+Config/testthat/edition: 3
+URL: https://m-muecke.github.io/insidertrade/,
+    https://github.com/m-muecke/insidertrade
+BugReports: https://github.com/m-muecke/insidertrade/issues
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.2
+RoxygenNote: 7.3.3
