@@ -1,0 +1,26 @@
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+      - id: check-added-large-files
+      - id: check-yaml
+        args:
+          - --unsafe
+      - id: end-of-file-fixer
+        exclude: \.Rd|\.md
+      - id: file-contents-sorter
+        files: ^\.Rbuildignore$
+  - repo: https://github.com/lorenzwalthert/precommit
+    rev: v0.4.3.9021
+    hooks:
+      - id: roxygenize
+        additional_dependencies:
+          - curl
+          - data.table
+          - httr2
+      - id: deps-in-desc
+      - id: no-browser-statement
+      - id: no-debug-statement
+      - id: parsable-R
+      - id: readme-rmd-rendered
+      - id: use-tidy-description
