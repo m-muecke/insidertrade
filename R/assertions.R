@@ -1,3 +1,10 @@
+is_integerish <- function(x, null_ok = FALSE) {
+  if (null_ok && is.null(x)) {
+    return(TRUE)
+  }
+  is.numeric(x) && length(x) > 0L && !anyNA(x) && all(as.integer(x) == x)
+}
+
 is_count <- function(x, null_ok = FALSE) {
   if (null_ok && is.null(x)) {
     return(TRUE)

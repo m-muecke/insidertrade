@@ -1,18 +1,19 @@
 #' SEC Form 3/4/5 bulk data
 #'
-#' Download and parse the quarterly bulk ZIP file from the SEC's insider transactions data sets.
+#' Download and parse the quarterly bulk ZIP files from the SEC's insider transactions data sets.
 #'
-#' @param year (`integer(1)`)\cr
-#'   The year of the filing (e.g. `2024`).
-#' @param quarter (`integer(1)`)\cr
-#'   The fiscal quarter. Must be between 1 and 4.
+#' @param year (`integer()`)\cr
+#'   The year(s) of the filing (e.g. `2024` or `2023:2024`).
+#' @param quarter (`integer()`)\cr
+#'   The fiscal quarter(s). Must be between 1 and 4. Default `1:4`.
 #' @param table (`NULL` | `character()`)\cr
 #'   Table names to return. Valid names are `"deriv_holding"`, `"deriv_trans"`,
 #'   `"footnotes"`, `"nonderiv_holding"`, `"nonderiv_trans"`, `"owner_signature"`,
 #'   `"reportingowner"`, and `"submission"`. Default `NULL`. If `NULL`, all tables are returned.
 #'
-#' @returns A named list of [data.table::data.table()]s, one per table in the ZIP file. If `table` has
-#'   length 1, a single [data.table::data.table()] is returned.
+#' @returns A named list of [data.table::data.table()]s, one per table. If multiple
+#'   year/quarter combinations are requested, the tables are row-bound across quarters. If
+#'   `table` has length 1, a single [data.table::data.table()] is returned.
 #' @source <https://www.sec.gov/data-research/sec-markets-data/insider-transactions-data-sets>
 #' @family bulk data
 #' @export
@@ -24,10 +25,13 @@
 #'
 #' # Get only the submission table
 #' sub <- sec_form345(2024, 2, "submission")
+#'
+#' # Get a full year of transactions
+#' trans <- sec_form345(2024, table = "nonderiv_trans")
 #' }
-sec_form345 <- function(year, quarter, table = NULL) {
-  stopifnot(is_count(year), year >= 2003L)
-  stopifnot(is_count(quarter), quarter >= 1L, quarter <= 4L)
+sec_form345 <- function(year, quarter = 1:4, table = NULL) {
+  stopifnot(is_integerish(year), all(year >= 2003L))
+  stopifnot(is_integerish(quarter), all(quarter >= 1L), all(quarter <= 4L))
 
   valid_tables <- c(
     "deriv_holding",
@@ -43,6 +47,22 @@ sec_form345 <- function(year, quarter, table = NULL) {
     stopifnot(is_character(table), all(table %in% valid_tables))
   }
 
+  grid <- CJ(year = year, quarter = quarter)
+  quarters <- lapply(seq_len(nrow(grid)), function(i) {
+    fetch_quarter(grid$year[[i]], grid$quarter[[i]], table)
+  })
+
+  tbl_names <- names(quarters[[1L]])
+  out <- lapply(tbl_names, \(nm) rbindlist(lapply(quarters, `[[`, nm)))
+  names(out) <- tbl_names
+
+  if (length(out) == 1L) {
+    return(out[[1L]])
+  }
+  out
+}
+
+fetch_quarter <- function(year, quarter, table) {
   zip_name <- sprintf("%dq%d_form345.zip", year, quarter)
   cache_path <- file.path(sec_cache_dir(), zip_name)
 
@@ -69,9 +89,6 @@ sec_form345 <- function(year, quarter, table = NULL) {
 
   if (!is.null(table)) {
     out <- out[table]
-  }
-  if (length(out) == 1L) {
-    return(out[[1L]])
   }
   out
 }
@@ -114,7 +131,7 @@ parse_form345_table <- function(dt, table_name) {
 #' \donttest{
 #' trans <- sec_transactions(2024, 2)
 #' }
-sec_transactions <- function(year, quarter) {
+sec_transactions <- function(year, quarter = 1:4) {
   data <- sec_form345(year, quarter, c("nonderiv_trans", "submission", "reportingowner"))
   trans <- data$nonderiv_trans
   sub <- data$submission

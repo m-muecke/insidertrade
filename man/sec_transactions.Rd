@@ -7,14 +7,14 @@
 \url{https://www.sec.gov/data-research/sec-markets-data/insider-transactions-data-sets}
 }
 \usage{
-sec_transactions(year, quarter)
+sec_transactions(year, quarter = 1:4)
 }
 \arguments{
-\item{year}{(\code{integer(1)})\cr
-The year of the filing (e.g. \code{2024}).}
+\item{year}{(\code{integer()})\cr
+The year(s) of the filing (e.g. \code{2024} or \code{2023:2024}).}
 
-\item{quarter}{(\code{integer(1)})\cr
-The fiscal quarter. Must be between 1 and 4.}
+\item{quarter}{(\code{integer()})\cr
+The fiscal quarter(s). Must be between 1 and 4. Default \code{1:4}.}
 }
 \value{
 A \code{\link[data.table:data.table]{data.table::data.table()}} with transaction data joined with submission and reporting owner

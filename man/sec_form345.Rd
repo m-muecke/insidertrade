@@ -7,14 +7,14 @@
 \url{https://www.sec.gov/data-research/sec-markets-data/insider-transactions-data-sets}
 }
 \usage{
-sec_form345(year, quarter, table = NULL)
+sec_form345(year, quarter = 1:4, table = NULL)
 }
 \arguments{
-\item{year}{(\code{integer(1)})\cr
-The year of the filing (e.g. \code{2024}).}
+\item{year}{(\code{integer()})\cr
+The year(s) of the filing (e.g. \code{2024} or \code{2023:2024}).}
 
-\item{quarter}{(\code{integer(1)})\cr
-The fiscal quarter. Must be between 1 and 4.}
+\item{quarter}{(\code{integer()})\cr
+The fiscal quarter(s). Must be between 1 and 4. Default \code{1:4}.}
 
 \item{table}{(\code{NULL} | \code{character()})\cr
 Table names to return. Valid names are \code{"deriv_holding"}, \code{"deriv_trans"},
@@ -22,11 +22,12 @@ Table names to return. Valid names are \code{"deriv_holding"}, \code{"deriv_tran
 \code{"reportingowner"}, and \code{"submission"}. Default \code{NULL}. If \code{NULL}, all tables are returned.}
 }
 \value{
-A named list of \code{\link[data.table:data.table]{data.table::data.table()}}s, one per table in the ZIP file. If \code{table} has
-length 1, a single \code{\link[data.table:data.table]{data.table::data.table()}} is returned.
+A named list of \code{\link[data.table:data.table]{data.table::data.table()}}s, one per table. If multiple
+year/quarter combinations are requested, the tables are row-bound across quarters. If
+\code{table} has length 1, a single \code{\link[data.table:data.table]{data.table::data.table()}} is returned.
 }
 \description{
-Download and parse the quarterly bulk ZIP file from the SEC's insider transactions data sets.
+Download and parse the quarterly bulk ZIP files from the SEC's insider transactions data sets.
 }
 \examples{
 \dontshow{if (httr2::is_online()) withAutoprint(\{ # examplesIf}
@@ -37,6 +38,9 @@ names(data)
 
 # Get only the submission table
 sub <- sec_form345(2024, 2, "submission")
+
+# Get a full year of transactions
+trans <- sec_form345(2024, table = "nonderiv_trans")
 }
 \dontshow{\}) # examplesIf}
 }
