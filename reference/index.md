@@ -26,7 +26,6 @@ Query the SEC EDGAR submissions API.
 
 Manage the local file cache.
 
-- [`sec_cache_dir()`](https://m-muecke.github.io/insidertrade/reference/sec_cache_dir.md)
-  : Get the cache directory
-- [`sec_cache_clear()`](https://m-muecke.github.io/insidertrade/reference/sec_cache_clear.md)
-  : Clear the cache
+- [`sec_cache_dir()`](https://m-muecke.github.io/insidertrade/reference/cache.md)
+  [`sec_cache_clear()`](https://m-muecke.github.io/insidertrade/reference/cache.md)
+  : Manage the insidertrade cache

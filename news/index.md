@@ -8,9 +8,9 @@
   fetches company filing metadata from the EDGAR API.
 - [`sec_tickers()`](https://m-muecke.github.io/insidertrade/reference/sec_tickers.md)
   fetches the full CIK-to-ticker mapping from the SEC.
-- [`sec_cache_clear()`](https://m-muecke.github.io/insidertrade/reference/sec_cache_clear.md)
+- [`sec_cache_clear()`](https://m-muecke.github.io/insidertrade/reference/cache.md)
   deletes cached ZIP files.
-- [`sec_cache_dir()`](https://m-muecke.github.io/insidertrade/reference/sec_cache_dir.md)
+- [`sec_cache_dir()`](https://m-muecke.github.io/insidertrade/reference/cache.md)
   returns the cache directory path.
 - [`sec_form345()`](https://m-muecke.github.io/insidertrade/reference/sec_form345.md)
   downloads and parses quarterly SEC Form 3/4/5 bulk data.
