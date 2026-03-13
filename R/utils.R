@@ -25,7 +25,15 @@ sec_cache_clear <- function() {
 }
 
 sec_user_agent <- function() {
-  getOption("insidertrade.user_agent") %||% "insidertrade muecke.maximilian@gmail.com"
+  ua <- getOption("insidertrade.user_agent")
+  if (is.null(ua)) {
+    stop(
+      "Set `options(insidertrade.user_agent = 'your@email.com')`. ",
+      "The SEC requires a valid User-Agent with contact information.",
+      call. = FALSE
+    )
+  }
+  ua
 }
 
 sec_download <- function(url, destfile) {

@@ -65,7 +65,7 @@ buys <- trans[
 top <- buys[, .(
   n_insiders = uniqueN(rptownercik),
   total_shares = sum(trans_shares, na.rm = TRUE)
-), by = .(ticker = issuertradingsymbol, company = issuername)][order(-n_insiders)]
+), by = .(ticker = issuertradingsymbol, company = issuername)][order(-n_insiders, -total_shares)]
 head(top, 10)
 #>     ticker                       company n_insiders total_shares
 #>     <char>                        <char>      <int>        <num>
@@ -75,10 +75,10 @@ head(top, 10)
 #>  4:   BCRX  BIOCRYST PHARMACEUTICALS INC         10    183601.00
 #>  5:    LAB        STANDARD BIOTOOLS INC.          9  18468648.00
 #>  6:    CRM              Salesforce, Inc.          9   3426051.00
-#>  7:   GHLD             Guild Holdings Co          9     19903.79
+#>  7:   None      Kayne Anderson BDC, Inc.          9    522124.55
 #>  8:   GNLX                  GENELUX Corp          9    268000.00
-#>  9:   CBKM    CONSUMERS BANCORP INC /OH/          9      3847.48
-#> 10:   NFBK      Northfield Bancorp, Inc.          9     75851.00
+#>  9:   NFBK      Northfield Bancorp, Inc.          9     75851.00
+#> 10:   GHLD             Guild Holdings Co          9     19903.79
 
 # plot insider purchases over the quarter
 library(ggplot2)
