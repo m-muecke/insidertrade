@@ -33,6 +33,7 @@ trans <- sec_transactions(2024, 2)
 }
 \seealso{
 Other bulk data: 
-\code{\link{sec_form345}()}
+\code{\link{sec_form345}()},
+\code{\link{sec_transaction_codes}()}
 }
 \concept{bulk data}

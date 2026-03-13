@@ -93,6 +93,15 @@ ggplot(daily, aes(x = trans_date, y = n_purchases)) +
   labs(title = "Daily Insider Purchases (Q4 2025)")
 ```
 
+You can also look up companies by ticker and fetch their insider filings from EDGAR:
+
+```{r}
+#| label: edgar
+tickers <- sec_tickers()
+cik <- tickers[ticker == "AAPL", cik]
+edgar_insider_filings(cik)
+```
+
 ## Related work
 
 * [insiderTrades](https://github.com/US-Department-of-the-Treasury/insiderTrades)

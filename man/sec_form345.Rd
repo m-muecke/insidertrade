@@ -42,6 +42,7 @@ sub <- sec_form345(2024, 2, "submission")
 }
 \seealso{
 Other bulk data: 
+\code{\link{sec_transaction_codes}()},
 \code{\link{sec_transactions}()}
 }
 \concept{bulk data}

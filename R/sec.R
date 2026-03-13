@@ -122,3 +122,42 @@ sec_transactions <- function(year, quarter) {
 
   trans[sub, on = "accession_number"][owner, on = "accession_number"]
 }
+
+#' SEC transaction codes
+#'
+#' Returns a lookup table mapping SEC transaction codes to human-readable descriptions.
+#'
+#' @returns A [data.table::data.table()] with columns `code` and `description`.
+#' @source <https://www.sec.gov/edgar/searchedgar/ownershipformcodes.html>
+#' @family bulk data
+#' @export
+#' @examples
+#' sec_transaction_codes()
+sec_transaction_codes <- function() {
+  # fmt: skip
+  data.table(
+    code = c("A", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "O", "P", "S", "U", "V", "W", "X", "Z"),
+    description = c(
+      "Grant, award, or other acquisition pursuant to Rule 16b-3(d)",
+      "Conversion of derivative security",
+      "Disposition to the issuer of issuer equity securities pursuant to Rule 16b-3(e)",
+      "Expiration of short derivative position",
+      "Expiration (or cancellation) of long derivative position with value received",
+      "Payment of exercise price or tax liability by delivering or withholding securities",
+      "Bona fide gift",
+      "Discretionary transaction in accordance with Rule 16b-3(f)",
+      "Other acquisition or disposition",
+      "Transaction in equity swap or instrument with similar characteristics",
+      "Small acquisition under Rule 16a-6",
+      "Exercise or conversion of derivative security exempted pursuant to Rule 16b-3",
+      "Exercise of out-of-the-money derivative security",
+      "Open market or private purchase",
+      "Open market or private sale",
+      "Disposition pursuant to a tender of shares in a change of control transaction",
+      "Transaction voluntarily reported earlier than required",
+      "Acquisition or disposition by will or the laws of descent and distribution",
+      "Exercise of in-the-money or at-the-money derivative security",
+      "Deposit into or withdrawal from voting trust"
+    )
+  )
+}

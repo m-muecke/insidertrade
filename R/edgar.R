@@ -59,3 +59,26 @@ edgar_insider_filings <- function(cik) {
   dt <- edgar_submissions(cik)
   dt[form %in% c("3", "4", "5")]
 }
+
+#' SEC company tickers
+#'
+#' Fetch the full CIK-to-ticker mapping from the SEC.
+#'
+#' @returns A [data.table::data.table()] with columns `cik`, `ticker`, and `title`.
+#' @source <https://www.sec.gov/files/company_tickers.json>
+#' @family EDGAR
+#' @export
+#' @examplesIf httr2::is_online()
+#' \donttest{
+#' tickers <- sec_tickers()
+#' tickers[ticker == "AAPL"]
+#' }
+sec_tickers <- function() {
+  body <- request("https://www.sec.gov/files/company_tickers.json") |>
+    req_user_agent(sec_user_agent()) |>
+    req_perform() |>
+    resp_body_json()
+  dt <- rbindlist(body)
+  setnames(dt, "cik_str", "cik")
+  dt
+}

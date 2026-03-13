@@ -2,6 +2,7 @@ url: https://m-muecke.github.io/insidertrade/
 
 template:
   bootstrap: 5
+  light-switch: true
 
 reference:
 - title: Bulk data
@@ -9,12 +10,14 @@ reference:
   contents:
   - sec_form345
   - sec_transactions
+  - sec_transaction_codes
 
 - title: EDGAR API
   desc: Query the SEC EDGAR submissions API.
   contents:
   - edgar_submissions
   - edgar_insider_filings
+  - sec_tickers
 
 - title: Cache
   desc: Manage the local file cache.
