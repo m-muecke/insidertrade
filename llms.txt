@@ -53,10 +53,13 @@ buys <- trans[
 ]
 
 # top 10 companies by number of distinct insider buyers
-top <- buys[, .(
-  n_insiders = uniqueN(rptownercik),
-  total_shares = sum(trans_shares, na.rm = TRUE)
-), by = .(ticker = issuertradingsymbol, company = issuername)][order(-n_insiders, -total_shares)]
+top <- buys[,
+  .(
+    n_insiders = uniqueN(rptownercik),
+    total_shares = sum(trans_shares, na.rm = TRUE)
+  ),
+  by = .(ticker = issuertradingsymbol, company = issuername)
+][order(-n_insiders, -total_shares)]
 head(top, 10)
 #>     ticker                       company n_insiders total_shares
 #>     <char>                        <char>      <int>        <num>
@@ -74,7 +77,8 @@ head(top, 10)
 # plot insider purchases over the quarter
 library(ggplot2)
 
-daily <- buys[, .(n_purchases = .N, total_shares = sum(trans_shares, na.rm = TRUE)),
+daily <- buys[,
+  .(n_purchases = .N, total_shares = sum(trans_shares, na.rm = TRUE)),
   by = trans_date
 ]
 
