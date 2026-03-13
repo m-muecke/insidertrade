@@ -57,5 +57,5 @@ edgar_submissions <- function(cik) {
 #' }
 edgar_insider_filings <- function(cik) {
   dt <- edgar_submissions(cik)
-  dt[dt$form %in% c("3", "4", "5"), ]
+  dt[form %in% c("3", "4", "5")]
 }
