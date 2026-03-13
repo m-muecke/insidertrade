@@ -8,6 +8,17 @@
 \description{
 Download and parse SEC insider trading data (Forms 3/4/5) from quarterly bulk data sets and the EDGAR submissions API.
 }
+\section{Options}{
+
+The following options configure package behavior:
+\itemize{
+\item \code{insidertrade.user_agent}: \strong{Required.} A string with your contact information
+(e.g. \code{"your@email.com"}). The SEC requires a valid User-Agent for all API requests.
+\item \code{insidertrade.cache}: If \code{TRUE}, cache API responses to disk. Default \code{FALSE}.
+\item \code{insidertrade.cache_max_age}: Number of days to keep cached API responses. Default \code{7}.
+}
+}
+
 \seealso{
 Useful links:
 \itemize{

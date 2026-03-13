@@ -1,20 +1,35 @@
-#' Get the cache directory
+#' Manage the insidertrade cache
 #'
-#' Returns the path to the directory where downloaded SEC data files are cached.
+#' `sec_cache_dir()` returns the path where cached data is stored.
+#' `sec_cache_clear()` deletes all cached files, including bulk data ZIPs and API responses.
 #'
-#' @returns A `character()` string with the path to the cache directory.
-#' @family cache
+#' @details
+#' Bulk data ZIPs from [sec_form345()] are always cached on disk. API responses from
+#' [sec_tickers()] and [edgar_submissions()] are only cached when enabled with
+#' `options(insidertrade.cache = TRUE)`. Cached API responses are stored for 7 days by default,
+#' but this can be customized with `options(insidertrade.cache_max_age = days)`.
+#'
+#' @name cache
+#' @examples
+#' # view cache location
+#' sec_cache_dir()
+#'
+#' \dontrun{
+#' # enable API caching
+#' options(insidertrade.cache = TRUE)
+#'
+#' # clear all cached data
+#' sec_cache_clear()
+#' }
+NULL
+
+#' @rdname cache
 #' @export
 sec_cache_dir <- function() {
   tools::R_user_dir("insidertrade", "cache")
 }
 
-#' Clear the cache
-#'
-#' Deletes all cached files, including bulk data ZIPs and API responses.
-#'
-#' @returns `NULL` invisibly.
-#' @family cache
+#' @rdname cache
 #' @export
 sec_cache_clear <- function() {
   dir <- sec_cache_dir()
