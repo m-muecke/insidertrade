@@ -10,7 +10,7 @@ sec_cache_clear()
 \code{NULL} invisibly.
 }
 \description{
-Deletes all cached ZIP files downloaded by \code{\link[=sec_form345]{sec_form345()}}.
+Deletes all cached files, including bulk data ZIPs and API responses.
 }
 \seealso{
 Other cache: 

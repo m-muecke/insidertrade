@@ -22,6 +22,7 @@ edgar_submissions <- function(cik) {
 
   body <- request(url) |>
     req_user_agent(sec_user_agent()) |>
+    req_sec_cache() |>
     req_perform() |>
     resp_body_json()
   recent <- body$filings$recent
@@ -76,6 +77,7 @@ edgar_insider_filings <- function(cik) {
 sec_tickers <- function() {
   body <- request("https://www.sec.gov/files/company_tickers.json") |>
     req_user_agent(sec_user_agent()) |>
+    req_sec_cache() |>
     req_perform() |>
     resp_body_json()
   dt <- rbindlist(body)

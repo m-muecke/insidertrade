@@ -11,7 +11,7 @@ sec_cache_dir <- function() {
 
 #' Clear the cache
 #'
-#' Deletes all cached ZIP files downloaded by [sec_form345()].
+#' Deletes all cached files, including bulk data ZIPs and API responses.
 #'
 #' @returns `NULL` invisibly.
 #' @family cache
@@ -22,6 +22,17 @@ sec_cache_clear <- function() {
     unlink(dir, recursive = TRUE)
   }
   invisible()
+}
+
+req_sec_cache <- function(req) {
+  if (isTRUE(getOption("insidertrade.cache", FALSE))) {
+    req <- req_cache(
+      req,
+      path = file.path(sec_cache_dir(), "httr2"),
+      max_age = getOption("insidertrade.cache_max_age", 7L) * 86400L
+    )
+  }
+  req
 }
 
 sec_user_agent <- function() {
