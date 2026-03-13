@@ -105,7 +105,7 @@
 <span><span class="va">top</span> <span class="op">&lt;-</span> <span class="va">buys</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span></span>
 <span>  n_insiders <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/data.table/man/duplicated.html" class="external-link">uniqueN</a></span><span class="op">(</span><span class="va">rptownercik</span><span class="op">)</span>,</span>
 <span>  total_shares <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">trans_shares</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span><span class="op">)</span>, by <span class="op">=</span> <span class="fu">.</span><span class="op">(</span>ticker <span class="op">=</span> <span class="va">issuertradingsymbol</span>, company <span class="op">=</span> <span class="va">issuername</span><span class="op">)</span><span class="op">]</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/order.html" class="external-link">order</a></span><span class="op">(</span><span class="op">-</span><span class="va">n_insiders</span><span class="op">)</span><span class="op">]</span></span>
+<span><span class="op">)</span>, by <span class="op">=</span> <span class="fu">.</span><span class="op">(</span>ticker <span class="op">=</span> <span class="va">issuertradingsymbol</span>, company <span class="op">=</span> <span class="va">issuername</span><span class="op">)</span><span class="op">]</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/order.html" class="external-link">order</a></span><span class="op">(</span><span class="op">-</span><span class="va">n_insiders</span>, <span class="op">-</span><span class="va">total_shares</span><span class="op">)</span><span class="op">]</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">top</span>, <span class="fl">10</span><span class="op">)</span></span>
 <span><span class="co">#&gt;     ticker                       company n_insiders total_shares</span></span>
 <span><span class="co">#&gt;     &lt;char&gt;                        &lt;char&gt;      &lt;int&gt;        &lt;num&gt;</span></span>
@@ -115,10 +115,10 @@
 <span><span class="co">#&gt;  4:   BCRX  BIOCRYST PHARMACEUTICALS INC         10    183601.00</span></span>
 <span><span class="co">#&gt;  5:    LAB        STANDARD BIOTOOLS INC.          9  18468648.00</span></span>
 <span><span class="co">#&gt;  6:    CRM              Salesforce, Inc.          9   3426051.00</span></span>
-<span><span class="co">#&gt;  7:   GHLD             Guild Holdings Co          9     19903.79</span></span>
+<span><span class="co">#&gt;  7:   None      Kayne Anderson BDC, Inc.          9    522124.55</span></span>
 <span><span class="co">#&gt;  8:   GNLX                  GENELUX Corp          9    268000.00</span></span>
-<span><span class="co">#&gt;  9:   CBKM    CONSUMERS BANCORP INC /OH/          9      3847.48</span></span>
-<span><span class="co">#&gt; 10:   NFBK      Northfield Bancorp, Inc.          9     75851.00</span></span>
+<span><span class="co">#&gt;  9:   NFBK      Northfield Bancorp, Inc.          9     75851.00</span></span>
+<span><span class="co">#&gt; 10:   GHLD             Guild Holdings Co          9     19903.79</span></span>
 <span></span>
 <span><span class="co"># plot insider purchases over the quarter</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span>
