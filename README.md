@@ -156,15 +156,10 @@ open_market <- trans[
 ]
 open_market[, let(month = as.Date(format(trans_date, "%Y-%m-01")))]
 ratio <- open_market[,
-  .(
-    n_buys = sum(trans_code == "P"),
-    n_sells = sum(trans_code == "S"),
-    buy_usd = sum(fifelse(trans_code == "P", trans_shares * trans_pricepershare, 0), na.rm = TRUE),
-    sell_usd = sum(fifelse(trans_code == "S", trans_shares * trans_pricepershare, 0), na.rm = TRUE)
-  ),
+  .(n_buys = sum(trans_code == "P"), n_sells = sum(trans_code == "S")),
   by = month
 ]
-ratio[, let(sell_buy_ratio = sell_usd / buy_usd)]
+ratio[, let(sell_buy_ratio = n_sells / n_buys)]
 
 ggplot(ratio, aes(x = month, y = sell_buy_ratio)) +
   geom_col() +
@@ -178,7 +173,7 @@ ggplot(ratio, aes(x = month, y = sell_buy_ratio)) +
     axis.text = element_text(color = "black"),
     axis.title = element_blank()
   ) +
-  labs(title = "Insider sell/buy ratio by dollar volume (2025)")
+  labs(title = "Insider sell/buy ratio by transaction count (2025)")
 ```
 
 <img src="man/figures/README-buy-sell-ratio-1.png" alt="" width="100%" />
