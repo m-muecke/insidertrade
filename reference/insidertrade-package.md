@@ -29,5 +29,5 @@ Useful links:
 
 ## Author
 
-**Maintainer**: Maximilian Muecke <muecke.maximilian@gmail.com>
+**Maintainer**: Maximilian Mücke <muecke.maximilian@gmail.com>
 ([ORCID](https://orcid.org/0009-0000-9432-9795))

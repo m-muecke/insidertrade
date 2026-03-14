@@ -1,12 +1,12 @@
 # SEC Form 3/4/5 bulk data
 
-Download and parse the quarterly bulk ZIP file from the SEC's insider
+Download and parse the quarterly bulk ZIP files from the SEC's insider
 transactions data sets.
 
 ## Usage
 
 ``` r
-sec_form345(year, quarter, table = NULL)
+sec_form345(year, quarter = 1:4, table = NULL)
 ```
 
 ## Source
@@ -17,13 +17,13 @@ sec_form345(year, quarter, table = NULL)
 
 - year:
 
-  (`integer(1)`)  
-  The year of the filing (e.g. `2024`).
+  ([`integer()`](https://rdrr.io/r/base/integer.html))  
+  The year(s) of the filing (e.g. `2024` or `2023:2024`).
 
 - quarter:
 
-  (`integer(1)`)  
-  The fiscal quarter. Must be between 1 and 4.
+  ([`integer()`](https://rdrr.io/r/base/integer.html))  
+  The fiscal quarter(s). Must be between 1 and 4. Default `1:4`.
 
 - table:
 
@@ -37,7 +37,8 @@ sec_form345(year, quarter, table = NULL)
 
 A named list of
 [`data.table::data.table()`](https://rdrr.io/pkg/data.table/man/data.table.html)s,
-one per table in the ZIP file. If `table` has length 1, a single
+one per table. If multiple year/quarter combinations are requested, the
+tables are row-bound across quarters. If `table` has length 1, a single
 [`data.table::data.table()`](https://rdrr.io/pkg/data.table/man/data.table.html)
 is returned.
 
@@ -59,5 +60,8 @@ names(data)
 
 # Get only the submission table
 sub <- sec_form345(2024, 2, "submission")
+
+# Get a full year of transactions
+trans <- sec_form345(2024, table = "nonderiv_trans")
 # }
 ```

@@ -7,7 +7,7 @@ table with `submission` and `reportingowner` tables on
 ## Usage
 
 ``` r
-sec_transactions(year, quarter)
+sec_transactions(year, quarter = 1:4)
 ```
 
 ## Source
@@ -18,13 +18,13 @@ sec_transactions(year, quarter)
 
 - year:
 
-  (`integer(1)`)  
-  The year of the filing (e.g. `2024`).
+  ([`integer()`](https://rdrr.io/r/base/integer.html))  
+  The year(s) of the filing (e.g. `2024` or `2023:2024`).
 
 - quarter:
 
-  (`integer(1)`)  
-  The fiscal quarter. Must be between 1 and 4.
+  ([`integer()`](https://rdrr.io/r/base/integer.html))  
+  The fiscal quarter(s). Must be between 1 and 4. Default `1:4`.
 
 ## Value
 
