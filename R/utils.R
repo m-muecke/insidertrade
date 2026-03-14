@@ -39,18 +39,7 @@ sec_cache_clear <- function() {
   invisible()
 }
 
-req_sec_cache <- function(req) {
-  if (isTRUE(getOption("insidertrade.cache", FALSE))) {
-    req <- req_cache(
-      req,
-      path = file.path(sec_cache_dir(), "httr2"),
-      max_age = getOption("insidertrade.cache_max_age", 7L) * 86400L
-    )
-  }
-  req
-}
-
-sec_user_agent <- function() {
+sec_perform <- function(url) {
   ua <- getOption("insidertrade.user_agent")
   if (is.null(ua)) {
     stop(
@@ -59,7 +48,16 @@ sec_user_agent <- function() {
       call. = FALSE
     )
   }
-  ua
+  req <- request(url) |>
+    req_user_agent(ua)
+  if (isTRUE(getOption("insidertrade.cache", FALSE))) {
+    req <- req_cache(
+      req,
+      path = file.path(sec_cache_dir(), "httr2"),
+      max_age = getOption("insidertrade.cache_max_age", 7L) * 86400L
+    )
+  }
+  req_perform(req)
 }
 
 sec_download <- function(url, destfile) {

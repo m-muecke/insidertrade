@@ -20,11 +20,7 @@ edgar_submissions <- function(cik) {
   cik <- sprintf("CIK%010d", as.integer(cik))
   url <- sprintf("https://data.sec.gov/submissions/%s.json", cik)
 
-  body <- request(url) |>
-    req_user_agent(sec_user_agent()) |>
-    req_sec_cache() |>
-    req_perform() |>
-    resp_body_json()
+  body <- resp_body_json(sec_perform(url))
   recent <- body$filings$recent
   dt <- setDT(lapply(recent, unlist))
   setnames(dt, tolower)
@@ -103,13 +99,9 @@ edgar_form4 <- function(cik, accession_number, primary_document) {
     xml_file
   )
 
-  doc <- request(url) |>
-    req_user_agent(sec_user_agent()) |>
-    req_sec_cache() |>
-    req_perform() |>
-    resp_body_xml()
-
-  parse_form4_xml(doc)
+  sec_perform(url) |>
+    resp_body_xml() |>
+    parse_form4_xml()
 }
 
 parse_form4_xml <- function(doc) {
@@ -237,12 +229,8 @@ edgar_insider_filings <- function(cik) {
 #' tickers[ticker == "AAPL"]
 #' }
 sec_tickers <- function() {
-  body <- request("https://www.sec.gov/files/company_tickers.json") |>
-    req_user_agent(sec_user_agent()) |>
-    req_sec_cache() |>
-    req_perform() |>
-    resp_body_json()
-  dt <- rbindlist(body)
-  setnames(dt, "cik_str", "cik")
-  dt
+  sec_perform("https://www.sec.gov/files/company_tickers.json") |>
+    resp_body_json() |>
+    rbindlist() |>
+    setnames("cik_str", "cik")
 }
