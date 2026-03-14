@@ -17,9 +17,9 @@ from two sources:
 - [Insider transactions bulk data
   sets](https://www.sec.gov/data-research/sec-markets-data/insider-transactions-data-sets)
   (quarterly TSV downloads)
-- [EDGAR submissions
+- [EDGAR
   API](https://www.sec.gov/search-filings/edgar-application-programming-interfaces)
-  (company filing metadata)
+  (company filing metadata and Form 4 XML transaction details)
 
 ## Installation
 
@@ -31,64 +31,155 @@ You can install the development version from
 pak::pak("m-muecke/insidertrade")
 ```
 
+## Configuration
+
+The SEC requires a valid User-Agent with contact information for all API
+requests. Set this once per session before making any calls:
+
+``` r
+options(insidertrade.user_agent = "your@email.com")
+```
+
+Optionally, enable caching to avoid re-downloading data:
+
+``` r
+options(insidertrade.cache = TRUE)
+```
+
 ## Usage
 
 ``` r
 library(data.table)
 library(insidertrade)
+```
 
-# download and parse all Form 3/4/5 tables for Q2 2024
-data <- sec_form345(2025, 4)
-str(lapply(data, dim))
-#> List of 8
-#>  $ deriv_holding   : int [1:2] 8223 26
-#>  $ deriv_trans     : int [1:2] 20439 42
-#>  $ footnotes       : int [1:2] 88855 3
-#>  $ nonderiv_holding: int [1:2] 17521 14
-#>  $ nonderiv_trans  : int [1:2] 59678 28
-#>  $ owner_signature : int [1:2] 39295 3
-#>  $ reportingowner  : int [1:2] 39602 13
-#>  $ submission      : int [1:2] 36421 14
+### Bulk data
 
-# get transactions joined with submission and owner details
+Download and parse all Form 3/4/5 tables for Q4 2025:
+
+``` r
 trans <- sec_transactions(2025, 4)
+```
 
-# filter to open-market purchases by officers and directors
+### Open-market purchases
+
+Filter to open-market purchases (code `"P"`) by officers and directors —
+the most informative signal for insider sentiment:
+
+``` r
 buys <- trans[
-  trans_code == "P" &
-    grepl("Officer|Director", rptowner_relationship) &
-    trans_date >= "2025-10-01" &
-    trans_date <= "2025-12-31"
+  trans_code == "P" & grepl("Officer|Director", rptowner_relationship)
 ]
+buys[, let(value = trans_shares * trans_pricepershare)]
+```
 
-# top 10 companies by number of distinct insider buyers
-buys[, value := trans_shares * trans_pricepershare]
+### Top insider buys
+
+Rank companies by the number of distinct insider buyers:
+
+``` r
 top <- buys[,
   .(n_insiders = uniqueN(rptownercik), total_usd = sum(value, na.rm = TRUE)),
   by = .(ticker = issuertradingsymbol, company = issuername)
 ]
 setorder(top, -n_insiders, -total_usd)
 head(top, 10)
-#>         ticker                           company n_insiders total_usd
-#>         <char>                            <char>      <int>     <num>
-#>  1:        CBC          Central Bancompany, Inc.         17   5104827
-#>  2:       MTDR              Matador Resources Co         13   1522756
-#>  3:        VAC MARRIOTT VACATIONS WORLDWIDE Corp         12  18231582
-#>  4:       HYNE               Hoyne Bancorp, Inc.         10   2428916
-#>  5:        OBK              Origin Bancorp, Inc.         10   1023669
-#>  6:        CRM                  Salesforce, Inc.          9 200626167
-#>  7:        LAB            STANDARD BIOTOOLS INC.          8 115266000
-#>  8:       ZBIO             Zenas BioPharma, Inc.          8  33252661
-#>  9:        XZO                 Exzeo Group, Inc.          8   2527329
-#> 10: HEI, HEI.A                        HEICO CORP          8   1416726
+#>     ticker                           company n_insiders   total_usd
+#>     <char>                            <char>      <int>       <num>
+#>  1:    CBC          Central Bancompany, Inc.         17   5104827.0
+#>  2:   MTDR              Matador Resources Co         13   1522756.2
+#>  3:    VAC MARRIOTT VACATIONS WORLDWIDE Corp         12  18231582.0
+#>  4:   HYNE               Hoyne Bancorp, Inc.         10   2428915.6
+#>  5:    OBK              Origin Bancorp, Inc.         10   1023668.6
+#>  6:    SPG     SIMON PROPERTY GROUP INC /DE/         10    394399.9
+#>  7:    CRM                  Salesforce, Inc.          9 200626167.0
+#>  8: PHXE.P           Phoenix Energy One, LLC          9    410000.0
+#>  9:    LAB            STANDARD BIOTOOLS INC.          8 115266000.0
+#> 10:   ZBIO             Zenas BioPharma, Inc.          8  34252652.3
+```
 
-# plot insider purchases over the quarter
+### Cluster buys
+
+Identify stocks where 3 or more insiders bought within the quarter — a
+strong bullish signal:
+
+``` r
+cluster <- buys[,
+  .(
+    n_insiders = uniqueN(rptownercik),
+    total_usd = sum(value, na.rm = TRUE),
+    first_buy = min(trans_date),
+    last_buy = max(trans_date)
+  ),
+  by = .(ticker = issuertradingsymbol, company = issuername)
+][n_insiders >= 3L]
+setorder(cluster, -n_insiders, -total_usd)
+head(cluster, 10)
+#>     ticker                           company n_insiders   total_usd  first_buy
+#>     <char>                            <char>      <int>       <num>     <Date>
+#>  1:    CBC          Central Bancompany, Inc.         17   5104827.0 2025-11-21
+#>  2:   MTDR              Matador Resources Co         13   1522756.2 2025-10-30
+#>  3:    VAC MARRIOTT VACATIONS WORLDWIDE Corp         12  18231582.0 2025-11-13
+#>  4:   HYNE               Hoyne Bancorp, Inc.         10   2428915.6 2025-12-03
+#>  5:    OBK              Origin Bancorp, Inc.         10   1023668.6 2025-10-27
+#>  6:    SPG     SIMON PROPERTY GROUP INC /DE/         10    394399.9 2025-09-30
+#>  7:    CRM                  Salesforce, Inc.          9 200626167.0 2025-12-05
+#>  8: PHXE.P           Phoenix Energy One, LLC          9    410000.0 2025-09-29
+#>  9:    LAB            STANDARD BIOTOOLS INC.          8 115266000.0 2025-11-07
+#> 10:   ZBIO             Zenas BioPharma, Inc.          8  34252652.3 2024-09-13
+#>       last_buy
+#>         <Date>
+#>  1: 2025-11-21
+#>  2: 2025-11-06
+#>  3: 2025-11-25
+#>  4: 2025-12-05
+#>  5: 2025-11-04
+#>  6: 2025-09-30
+#>  7: 2025-12-17
+#>  8: 2025-09-29
+#>  9: 2025-12-04
+#> 10: 2025-10-09
+```
+
+### Buy/sell ratio
+
+Compute the market-wide buy/sell ratio by month — a classic contrarian
+indicator. High sell ratios historically correlate with market tops:
+
+``` r
 library(ggplot2)
 
-daily <- buys[,
-  .(n_purchases = .N, total_shares = sum(trans_shares, na.rm = TRUE)),
-  by = trans_date
-]
+open_market <- trans[trans_code %in% c("P", "S")]
+open_market[, let(month = as.Date(format(trans_date, "%Y-%m-01")))]
+ratio <- open_market[, .(
+  n_buys = sum(trans_code == "P"),
+  n_sells = sum(trans_code == "S"),
+  buy_usd = sum(fifelse(trans_code == "P", trans_shares * trans_pricepershare, 0), na.rm = TRUE),
+  sell_usd = sum(fifelse(trans_code == "S", trans_shares * trans_pricepershare, 0), na.rm = TRUE)
+), by = month]
+ratio[, let(sell_buy_ratio = sell_usd / buy_usd)]
+
+ggplot(ratio, aes(x = month, y = sell_buy_ratio)) +
+  geom_col() +
+  scale_x_date(date_labels = "%b %Y") +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(face = "bold"),
+    panel.grid.major.y = element_line(color = "black", linewidth = 0.2),
+    panel.grid.major.x = element_blank(),
+    panel.grid.minor = element_blank(),
+    axis.text = element_text(color = "black"),
+    axis.title = element_blank()
+  ) +
+  labs(title = "Insider sell/buy ratio by dollar volume (Q4 2025)")
+```
+
+<img src="man/figures/README-buy-sell-ratio-1.png" alt="" width="100%" />
+
+### Daily purchase activity
+
+``` r
+daily <- buys[, .(n_purchases = .N, total_usd = sum(value, na.rm = TRUE)), by = trans_date]
 
 ggplot(daily, aes(x = trans_date, y = n_purchases)) +
   geom_col() +
@@ -102,13 +193,14 @@ ggplot(daily, aes(x = trans_date, y = n_purchases)) +
     axis.text = element_text(color = "black"),
     axis.title = element_blank()
   ) +
-  labs(title = "Daily Insider Purchases (Q4 2025)")
+  labs(title = "Daily insider purchases by officers and directors (Q4 2025)")
 ```
 
-<img src="man/figures/README-demo-1.png" alt="" width="100%" />
+<img src="man/figures/README-daily-1.png" alt="" width="100%" />
 
-You can also look up companies by ticker and fetch their insider filings
-from EDGAR:
+### EDGAR API
+
+Look up a company by ticker and fetch their insider filings:
 
 ``` r
 tickers <- sec_tickers()
@@ -117,17 +209,17 @@ filings <- edgar_insider_filings(cik)
 filings
 #>           accessionnumber filing_date reportdate acceptance_datetime    act
 #>                    <char>      <Date>     <char>              <POSc> <char>
-#>   1: 0001780525-26-000003  2026-03-06 2026-03-01 2026-03-06 18:30:51
-#>   2: 0001059235-26-000004  2026-02-26 2026-02-24 2026-02-26 18:34:19
-#>   3: 0001216519-26-000004  2026-02-26 2026-02-24 2026-02-26 18:33:49
-#>   4: 0001179864-26-000004  2026-02-26 2026-02-24 2026-02-26 18:33:14
-#>   5: 0001214128-26-000004  2026-02-26 2026-02-24 2026-02-26 18:32:41
-#>  ---
-#> 604: 0001181431-15-004549  2015-03-12 2015-03-10 2015-03-12 18:34:12
-#> 605: 0001181431-15-004548  2015-03-12 2015-03-10 2015-03-12 18:33:47
-#> 606: 0001181431-15-004547  2015-03-12 2015-03-10 2015-03-12 18:33:20
-#> 607: 0001181431-15-004546  2015-03-12 2015-03-10 2015-03-12 18:32:46
-#> 608: 0001181431-15-004545  2015-03-12 2015-03-10 2015-03-12 18:32:12
+#>   1: 0001780525-26-000003  2026-03-06 2026-03-01 2026-03-06 18:30:51       
+#>   2: 0001059235-26-000004  2026-02-26 2026-02-24 2026-02-26 18:34:19       
+#>   3: 0001216519-26-000004  2026-02-26 2026-02-24 2026-02-26 18:33:49       
+#>   4: 0001179864-26-000004  2026-02-26 2026-02-24 2026-02-26 18:33:14       
+#>   5: 0001214128-26-000004  2026-02-26 2026-02-24 2026-02-26 18:32:41       
+#>  ---                                                                       
+#> 604: 0001181431-15-004549  2015-03-12 2015-03-10 2015-03-12 18:34:12       
+#> 605: 0001181431-15-004548  2015-03-12 2015-03-10 2015-03-12 18:33:47       
+#> 606: 0001181431-15-004547  2015-03-12 2015-03-10 2015-03-12 18:33:20       
+#> 607: 0001181431-15-004546  2015-03-12 2015-03-10 2015-03-12 18:32:46       
+#> 608: 0001181431-15-004545  2015-03-12 2015-03-10 2015-03-12 18:32:12       
 #>        form filenumber filmnumber  items core_type   size isxbrl isinlinexbrl
 #>      <char>     <char>     <char> <char>    <char>  <int>  <int>        <int>
 #>   1:      3                                      3 490535      0            0
@@ -135,7 +227,7 @@ filings
 #>   3:      4                                      4   5760      0            0
 #>   4:      4                                      4   5734      0            0
 #>   5:      4                                      4   7816      0            0
-#>  ---
+#>  ---                                                                         
 #> 604:      4                                      4   5481      0            0
 #> 605:      4                                      4   5481      0            0
 #> 606:      4                                      4   5499      0            0
@@ -148,7 +240,7 @@ filings
 #>   3: xslF345X05/wk-form4_1772148826.xml                                 FORM 4
 #>   4: xslF345X05/wk-form4_1772148791.xml                                 FORM 4
 #>   5: xslF345X05/wk-form4_1772148758.xml                                 FORM 4
-#>  ---
+#>  ---                                                                          
 #> 604:           xslF345X03/rrd423481.xml     2015.03.10 IGER FORM 4 - RSU GRANT
 #> 605:           xslF345X03/rrd423482.xml     2015.03.10 JUNG FORM 4 - RSU GRANT
 #> 606:           xslF345X03/rrd423483.xml 2015.03.10 LEVINSON FORM 4 - RSU GRANT
@@ -156,20 +248,29 @@ filings
 #> 608:           xslF345X03/rrd423485.xml   2015.03.10 WAGNER FORM 4 - RSU GRANT
 ```
 
-To see the actual transaction details, parse a Form 4 filing:
+### Form 4 transaction details
+
+Parse the Form 4 XML to see the actual transactions — what was traded,
+how many shares, and at what price:
 
 ``` r
 form4s <- filings[form == "4"]
-txns <- rbindlist(lapply(seq_len(min(5L, nrow(form4s))), function(i) {
+txns <- rbindlist(lapply(seq_len(min(10L, nrow(form4s))), function(i) {
   edgar_form4(cik, form4s$accessionnumber[i], form4s$primarydocument[i])
 }))
 txns[, .(owner_name, transaction_date, transaction_code, security_title, shares, price_per_share)]
 #>           owner_name transaction_date transaction_code security_title shares
 #>               <char>           <Date>           <char>         <char>  <num>
 #> 1: LEVINSON ARTHUR D       2026-02-26                G   Common Stock   1113
+#> 2:      WAGNER SUSAN       2026-02-01                M   Common Stock   1255
+#> 3:    SUGAR RONALD D       2026-02-01                M   Common Stock   1255
+#> 4:   LOZANO MONICA C       2026-02-01                M   Common Stock   1255
 #>    price_per_share
 #>              <num>
 #> 1:               0
+#> 2:              NA
+#> 3:              NA
+#> 4:              NA
 ```
 
 ## Related work

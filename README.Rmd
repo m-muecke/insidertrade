@@ -26,7 +26,7 @@ options(insidertrade.cache = TRUE)
 insidertrade provides access to SEC insider trading data (Forms 3/4/5) from two sources:
 
 - [Insider transactions bulk data sets](https://www.sec.gov/data-research/sec-markets-data/insider-transactions-data-sets) (quarterly TSV downloads)
-- [EDGAR submissions API](https://www.sec.gov/search-filings/edgar-application-programming-interfaces) (company filing metadata)
+- [EDGAR API](https://www.sec.gov/search-filings/edgar-application-programming-interfaces) (company filing metadata and Form 4 XML transaction details)
 
 ## Installation
 
@@ -38,46 +38,129 @@ You can install the development version from [GitHub](https://github.com/) with:
 pak::pak("m-muecke/insidertrade")
 ```
 
+## Configuration
+
+The SEC requires a valid User-Agent with contact information for all API requests.
+Set this once per session before making any calls:
+
+```{r}
+#| eval: false
+options(insidertrade.user_agent = "your@email.com")
+```
+
+Optionally, enable caching to avoid re-downloading data:
+
+```{r}
+#| eval: false
+options(insidertrade.cache = TRUE)
+```
+
 ## Usage
 
 ```{r}
-#| label: demo
+#| label: setup
 #| message: false
-#| dpi: 300
 library(data.table)
 library(insidertrade)
+```
 
-# download and parse all Form 3/4/5 tables for Q2 2024
-data <- sec_form345(2025, 4)
-str(lapply(data, dim))
+### Bulk data
 
-# get transactions joined with submission and owner details
+Download and parse all Form 3/4/5 tables for Q4 2025:
+
+```{r}
+#| label: bulk
 trans <- sec_transactions(2025, 4)
+```
 
-# filter to open-market purchases by officers and directors
+### Open-market purchases
+
+Filter to open-market purchases (code `"P"`) by officers and directors — the most
+informative signal for insider sentiment:
+
+```{r}
+#| label: buys
 buys <- trans[
-  trans_code == "P" &
-    grepl("Officer|Director", rptowner_relationship) &
-    trans_date >= "2025-10-01" &
-    trans_date <= "2025-12-31"
+  trans_code == "P" & grepl("Officer|Director", rptowner_relationship)
 ]
+buys[, let(value = trans_shares * trans_pricepershare)]
+```
 
-# top 10 companies by number of distinct insider buyers
-buys[, value := trans_shares * trans_pricepershare]
+### Top insider buys
+
+Rank companies by the number of distinct insider buyers:
+
+```{r}
+#| label: top-buys
 top <- buys[,
   .(n_insiders = uniqueN(rptownercik), total_usd = sum(value, na.rm = TRUE)),
   by = .(ticker = issuertradingsymbol, company = issuername)
 ]
 setorder(top, -n_insiders, -total_usd)
 head(top, 10)
+```
 
-# plot insider purchases over the quarter
+### Cluster buys
+
+Identify stocks where 3 or more insiders bought within the quarter — a strong
+bullish signal:
+
+```{r}
+#| label: cluster
+cluster <- buys[,
+  .(
+    n_insiders = uniqueN(rptownercik),
+    total_usd = sum(value, na.rm = TRUE),
+    first_buy = min(trans_date),
+    last_buy = max(trans_date)
+  ),
+  by = .(ticker = issuertradingsymbol, company = issuername)
+][n_insiders >= 3L]
+setorder(cluster, -n_insiders, -total_usd)
+head(cluster, 10)
+```
+
+### Buy/sell ratio
+
+Compute the market-wide buy/sell ratio by month — a classic contrarian indicator.
+High sell ratios historically correlate with market tops:
+
+```{r}
+#| label: buy-sell-ratio
+#| dpi: 300
 library(ggplot2)
 
-daily <- buys[,
-  .(n_purchases = .N, total_shares = sum(trans_shares, na.rm = TRUE)),
-  by = trans_date
-]
+open_market <- trans[trans_code %in% c("P", "S")]
+open_market[, let(month = as.Date(format(trans_date, "%Y-%m-01")))]
+ratio <- open_market[, .(
+  n_buys = sum(trans_code == "P"),
+  n_sells = sum(trans_code == "S"),
+  buy_usd = sum(fifelse(trans_code == "P", trans_shares * trans_pricepershare, 0), na.rm = TRUE),
+  sell_usd = sum(fifelse(trans_code == "S", trans_shares * trans_pricepershare, 0), na.rm = TRUE)
+), by = month]
+ratio[, let(sell_buy_ratio = sell_usd / buy_usd)]
+
+ggplot(ratio, aes(x = month, y = sell_buy_ratio)) +
+  geom_col() +
+  scale_x_date(date_labels = "%b %Y") +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(face = "bold"),
+    panel.grid.major.y = element_line(color = "black", linewidth = 0.2),
+    panel.grid.major.x = element_blank(),
+    panel.grid.minor = element_blank(),
+    axis.text = element_text(color = "black"),
+    axis.title = element_blank()
+  ) +
+  labs(title = "Insider sell/buy ratio by dollar volume (Q4 2025)")
+```
+
+### Daily purchase activity
+
+```{r}
+#| label: daily
+#| dpi: 300
+daily <- buys[, .(n_purchases = .N, total_usd = sum(value, na.rm = TRUE)), by = trans_date]
 
 ggplot(daily, aes(x = trans_date, y = n_purchases)) +
   geom_col() +
@@ -91,10 +174,12 @@ ggplot(daily, aes(x = trans_date, y = n_purchases)) +
     axis.text = element_text(color = "black"),
     axis.title = element_blank()
   ) +
-  labs(title = "Daily Insider Purchases (Q4 2025)")
+  labs(title = "Daily insider purchases by officers and directors (Q4 2025)")
 ```
 
-You can also look up companies by ticker and fetch their insider filings from EDGAR:
+### EDGAR API
+
+Look up a company by ticker and fetch their insider filings:
 
 ```{r}
 #| label: edgar
@@ -104,12 +189,15 @@ filings <- edgar_insider_filings(cik)
 filings
 ```
 
-To see the actual transaction details, parse a Form 4 filing:
+### Form 4 transaction details
+
+Parse the Form 4 XML to see the actual transactions — what was traded, how many
+shares, and at what price:
 
 ```{r}
 #| label: form4
 form4s <- filings[form == "4"]
-txns <- rbindlist(lapply(seq_len(min(5L, nrow(form4s))), function(i) {
+txns <- rbindlist(lapply(seq_len(min(10L, nrow(form4s))), function(i) {
   edgar_form4(cik, form4s$accessionnumber[i], form4s$primarydocument[i])
 }))
 txns[, .(owner_name, transaction_date, transaction_code, security_title, shares, price_per_share)]
