@@ -44,6 +44,5 @@ Other bulk data:
 ``` r
 # \donttest{
 trans <- sec_transactions(2024, 2)
-#> Error in sec_user_agent(): could not find function "sec_user_agent"
 # }
 ```

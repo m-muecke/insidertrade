@@ -97,9 +97,9 @@
 <div class="section level3">
 <h3 id="bulk-data">Bulk data<a class="anchor" aria-label="anchor" href="#bulk-data"></a>
 </h3>
-<p>Download and parse all Form 3/4/5 tables for Q4 2025:</p>
+<p>Download and parse all Form 3/4/5 tables for 2025:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">trans</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/sec_transactions.html">sec_transactions</a></span><span class="op">(</span><span class="fl">2025</span>, <span class="fl">4</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">trans</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/sec_transactions.html">sec_transactions</a></span><span class="op">(</span><span class="fl">2025</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="open-market-purchases">Open-market purchases<a class="anchor" aria-label="anchor" href="#open-market-purchases"></a>
@@ -107,7 +107,9 @@
 <p>Filter to open-market purchases (code <code>"P"</code>) by officers and directors — the most informative signal for insider sentiment:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">buys</span> <span class="op">&lt;-</span> <span class="va">trans</span><span class="op">[</span></span>
-<span>  <span class="va">trans_code</span> <span class="op">==</span> <span class="st">"P"</span> <span class="op">&amp;</span> <span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">grepl</a></span><span class="op">(</span><span class="st">"Officer|Director"</span>, <span class="va">rptowner_relationship</span><span class="op">)</span></span>
+<span>  <span class="va">trans_code</span> <span class="op">==</span> <span class="st">"P"</span> <span class="op">&amp;</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">grepl</a></span><span class="op">(</span><span class="st">"Officer|Director"</span>, <span class="va">rptowner_relationship</span><span class="op">)</span> <span class="op">&amp;</span></span>
+<span>    <span class="va">trans_date</span> <span class="op">&gt;=</span> <span class="st">"2025-01-01"</span> <span class="op">&amp;</span> <span class="va">trans_date</span> <span class="op">&lt;=</span> <span class="st">"2025-12-31"</span></span>
 <span><span class="op">]</span></span>
 <span><span class="va">buys</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/pkg/data.table/man/assign.html" class="external-link">let</a></span><span class="op">(</span>value <span class="op">=</span> <span class="va">trans_shares</span> <span class="op">*</span> <span class="va">trans_pricepershare</span><span class="op">)</span><span class="op">]</span></span></code></pre></div>
 </div>
@@ -122,23 +124,23 @@
 <span><span class="op">]</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/data.table/man/setorder.html" class="external-link">setorder</a></span><span class="op">(</span><span class="va">top</span>, <span class="op">-</span><span class="va">n_insiders</span>, <span class="op">-</span><span class="va">total_usd</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">top</span>, <span class="fl">10</span><span class="op">)</span></span>
-<span><span class="co">#&gt;     ticker                           company n_insiders   total_usd</span></span>
-<span><span class="co">#&gt;     &lt;char&gt;                            &lt;char&gt;      &lt;int&gt;       &lt;num&gt;</span></span>
-<span><span class="co">#&gt;  1:    CBC          Central Bancompany, Inc.         17   5104827.0</span></span>
-<span><span class="co">#&gt;  2:   MTDR              Matador Resources Co         13   1522756.2</span></span>
-<span><span class="co">#&gt;  3:    VAC MARRIOTT VACATIONS WORLDWIDE Corp         12  18231582.0</span></span>
-<span><span class="co">#&gt;  4:   HYNE               Hoyne Bancorp, Inc.         10   2428915.6</span></span>
-<span><span class="co">#&gt;  5:    OBK              Origin Bancorp, Inc.         10   1023668.6</span></span>
-<span><span class="co">#&gt;  6:    SPG     SIMON PROPERTY GROUP INC /DE/         10    394399.9</span></span>
-<span><span class="co">#&gt;  7:    CRM                  Salesforce, Inc.          9 200626167.0</span></span>
-<span><span class="co">#&gt;  8: PHXE.P           Phoenix Energy One, LLC          9    410000.0</span></span>
-<span><span class="co">#&gt;  9:    LAB            STANDARD BIOTOOLS INC.          8 115266000.0</span></span>
-<span><span class="co">#&gt; 10:   ZBIO             Zenas BioPharma, Inc.          8  34252652.3</span></span></code></pre></div>
+<span><span class="co">#&gt;     ticker                           company n_insiders  total_usd</span></span>
+<span><span class="co">#&gt;     &lt;char&gt;                            &lt;char&gt;      &lt;int&gt;      &lt;num&gt;</span></span>
+<span><span class="co">#&gt;  1:   ACTU        ACTUATE THERAPEUTICS, INC.         24   11999904</span></span>
+<span><span class="co">#&gt;  2:   EFSI      EAGLE FINANCIAL SERVICES INC         21     596869</span></span>
+<span><span class="co">#&gt;  3:   ALKT           ALKAMI TECHNOLOGY, INC.         19  534703590</span></span>
+<span><span class="co">#&gt;  4:    CBC          Central Bancompany, Inc.         17    5104827</span></span>
+<span><span class="co">#&gt;  5:   MTDR              Matador Resources Co         17    4647941</span></span>
+<span><span class="co">#&gt;  6:   KYMR         Kymera Therapeutics, Inc.         16 1347604988</span></span>
+<span><span class="co">#&gt;  7:   AVBH           Avidbank Holdings, Inc.         16    3488755</span></span>
+<span><span class="co">#&gt;  8:   WSBC                      WESBANCO INC         15    1556841</span></span>
+<span><span class="co">#&gt;  9:    VAC MARRIOTT VACATIONS WORLDWIDE Corp         14  222259811</span></span>
+<span><span class="co">#&gt; 10:    HPP   Hudson Pacific Properties, Inc.         14    2564984</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="cluster-buys">Cluster buys<a class="anchor" aria-label="anchor" href="#cluster-buys"></a>
 </h3>
-<p>Identify stocks where 3 or more insiders bought within the quarter — a strong bullish signal:</p>
+<p>Identify stocks where 3 or more insiders bought within the year — a strong bullish signal:</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">cluster</span> <span class="op">&lt;-</span> <span class="va">buys</span><span class="op">[</span>,</span>
 <span>  <span class="fu">.</span><span class="op">(</span></span>
@@ -151,30 +153,30 @@
 <span><span class="op">]</span><span class="op">[</span><span class="va">n_insiders</span> <span class="op">&gt;=</span> <span class="fl">3L</span><span class="op">]</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/data.table/man/setorder.html" class="external-link">setorder</a></span><span class="op">(</span><span class="va">cluster</span>, <span class="op">-</span><span class="va">n_insiders</span>, <span class="op">-</span><span class="va">total_usd</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">cluster</span>, <span class="fl">10</span><span class="op">)</span></span>
-<span><span class="co">#&gt;     ticker                           company n_insiders   total_usd  first_buy</span></span>
-<span><span class="co">#&gt;     &lt;char&gt;                            &lt;char&gt;      &lt;int&gt;       &lt;num&gt;     &lt;Date&gt;</span></span>
-<span><span class="co">#&gt;  1:    CBC          Central Bancompany, Inc.         17   5104827.0 2025-11-21</span></span>
-<span><span class="co">#&gt;  2:   MTDR              Matador Resources Co         13   1522756.2 2025-10-30</span></span>
-<span><span class="co">#&gt;  3:    VAC MARRIOTT VACATIONS WORLDWIDE Corp         12  18231582.0 2025-11-13</span></span>
-<span><span class="co">#&gt;  4:   HYNE               Hoyne Bancorp, Inc.         10   2428915.6 2025-12-03</span></span>
-<span><span class="co">#&gt;  5:    OBK              Origin Bancorp, Inc.         10   1023668.6 2025-10-27</span></span>
-<span><span class="co">#&gt;  6:    SPG     SIMON PROPERTY GROUP INC /DE/         10    394399.9 2025-09-30</span></span>
-<span><span class="co">#&gt;  7:    CRM                  Salesforce, Inc.          9 200626167.0 2025-12-05</span></span>
-<span><span class="co">#&gt;  8: PHXE.P           Phoenix Energy One, LLC          9    410000.0 2025-09-29</span></span>
-<span><span class="co">#&gt;  9:    LAB            STANDARD BIOTOOLS INC.          8 115266000.0 2025-11-07</span></span>
-<span><span class="co">#&gt; 10:   ZBIO             Zenas BioPharma, Inc.          8  34252652.3 2024-09-13</span></span>
+<span><span class="co">#&gt;     ticker                           company n_insiders  total_usd  first_buy</span></span>
+<span><span class="co">#&gt;     &lt;char&gt;                            &lt;char&gt;      &lt;int&gt;      &lt;num&gt;     &lt;Date&gt;</span></span>
+<span><span class="co">#&gt;  1:   ACTU        ACTUATE THERAPEUTICS, INC.         24   11999904 2025-06-27</span></span>
+<span><span class="co">#&gt;  2:   EFSI      EAGLE FINANCIAL SERVICES INC         21     596869 2025-02-07</span></span>
+<span><span class="co">#&gt;  3:   ALKT           ALKAMI TECHNOLOGY, INC.         19  534703590 2025-05-15</span></span>
+<span><span class="co">#&gt;  4:    CBC          Central Bancompany, Inc.         17    5104827 2025-11-21</span></span>
+<span><span class="co">#&gt;  5:   MTDR              Matador Resources Co         17    4647941 2025-02-21</span></span>
+<span><span class="co">#&gt;  6:   KYMR         Kymera Therapeutics, Inc.         16 1347604988 2025-06-30</span></span>
+<span><span class="co">#&gt;  7:   AVBH           Avidbank Holdings, Inc.         16    3488755 2025-08-07</span></span>
+<span><span class="co">#&gt;  8:   WSBC                      WESBANCO INC         15    1556841 2025-05-22</span></span>
+<span><span class="co">#&gt;  9:    VAC MARRIOTT VACATIONS WORLDWIDE Corp         14  222259811 2025-03-04</span></span>
+<span><span class="co">#&gt; 10:    HPP   Hudson Pacific Properties, Inc.         14    2564984 2025-06-12</span></span>
 <span><span class="co">#&gt;       last_buy</span></span>
 <span><span class="co">#&gt;         &lt;Date&gt;</span></span>
-<span><span class="co">#&gt;  1: 2025-11-21</span></span>
-<span><span class="co">#&gt;  2: 2025-11-06</span></span>
-<span><span class="co">#&gt;  3: 2025-11-25</span></span>
-<span><span class="co">#&gt;  4: 2025-12-05</span></span>
-<span><span class="co">#&gt;  5: 2025-11-04</span></span>
-<span><span class="co">#&gt;  6: 2025-09-30</span></span>
-<span><span class="co">#&gt;  7: 2025-12-17</span></span>
-<span><span class="co">#&gt;  8: 2025-09-29</span></span>
-<span><span class="co">#&gt;  9: 2025-12-04</span></span>
-<span><span class="co">#&gt; 10: 2025-10-09</span></span></code></pre></div>
+<span><span class="co">#&gt;  1: 2025-06-27</span></span>
+<span><span class="co">#&gt;  2: 2025-07-31</span></span>
+<span><span class="co">#&gt;  3: 2025-08-13</span></span>
+<span><span class="co">#&gt;  4: 2025-11-21</span></span>
+<span><span class="co">#&gt;  5: 2025-11-06</span></span>
+<span><span class="co">#&gt;  6: 2025-12-11</span></span>
+<span><span class="co">#&gt;  7: 2025-08-08</span></span>
+<span><span class="co">#&gt;  8: 2025-10-30</span></span>
+<span><span class="co">#&gt;  9: 2025-11-25</span></span>
+<span><span class="co">#&gt; 10: 2025-06-12</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="buysell-ratio">Buy/sell ratio<a class="anchor" aria-label="anchor" href="#buysell-ratio"></a>
@@ -183,14 +185,19 @@
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">open_market</span> <span class="op">&lt;-</span> <span class="va">trans</span><span class="op">[</span><span class="va">trans_code</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"P"</span>, <span class="st">"S"</span><span class="op">)</span><span class="op">]</span></span>
+<span><span class="va">open_market</span> <span class="op">&lt;-</span> <span class="va">trans</span><span class="op">[</span></span>
+<span>  <span class="va">trans_code</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"P"</span>, <span class="st">"S"</span><span class="op">)</span> <span class="op">&amp;</span> <span class="va">trans_date</span> <span class="op">&gt;=</span> <span class="st">"2025-01-01"</span> <span class="op">&amp;</span> <span class="va">trans_date</span> <span class="op">&lt;=</span> <span class="st">"2025-12-31"</span></span>
+<span><span class="op">]</span></span>
 <span><span class="va">open_market</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/pkg/data.table/man/assign.html" class="external-link">let</a></span><span class="op">(</span>month <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html" class="external-link">as.Date</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/format.html" class="external-link">format</a></span><span class="op">(</span><span class="va">trans_date</span>, <span class="st">"%Y-%m-01"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">]</span></span>
-<span><span class="va">ratio</span> <span class="op">&lt;-</span> <span class="va">open_market</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span></span>
-<span>  n_buys <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">trans_code</span> <span class="op">==</span> <span class="st">"P"</span><span class="op">)</span>,</span>
-<span>  n_sells <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">trans_code</span> <span class="op">==</span> <span class="st">"S"</span><span class="op">)</span>,</span>
-<span>  buy_usd <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/data.table/man/fifelse.html" class="external-link">fifelse</a></span><span class="op">(</span><span class="va">trans_code</span> <span class="op">==</span> <span class="st">"P"</span>, <span class="va">trans_shares</span> <span class="op">*</span> <span class="va">trans_pricepershare</span>, <span class="fl">0</span><span class="op">)</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>,</span>
-<span>  sell_usd <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/data.table/man/fifelse.html" class="external-link">fifelse</a></span><span class="op">(</span><span class="va">trans_code</span> <span class="op">==</span> <span class="st">"S"</span>, <span class="va">trans_shares</span> <span class="op">*</span> <span class="va">trans_pricepershare</span>, <span class="fl">0</span><span class="op">)</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span><span class="op">)</span>, by <span class="op">=</span> <span class="va">month</span><span class="op">]</span></span>
+<span><span class="va">ratio</span> <span class="op">&lt;-</span> <span class="va">open_market</span><span class="op">[</span>,</span>
+<span>  <span class="fu">.</span><span class="op">(</span></span>
+<span>    n_buys <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">trans_code</span> <span class="op">==</span> <span class="st">"P"</span><span class="op">)</span>,</span>
+<span>    n_sells <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">trans_code</span> <span class="op">==</span> <span class="st">"S"</span><span class="op">)</span>,</span>
+<span>    buy_usd <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/data.table/man/fifelse.html" class="external-link">fifelse</a></span><span class="op">(</span><span class="va">trans_code</span> <span class="op">==</span> <span class="st">"P"</span>, <span class="va">trans_shares</span> <span class="op">*</span> <span class="va">trans_pricepershare</span>, <span class="fl">0</span><span class="op">)</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>,</span>
+<span>    sell_usd <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/data.table/man/fifelse.html" class="external-link">fifelse</a></span><span class="op">(</span><span class="va">trans_code</span> <span class="op">==</span> <span class="st">"S"</span>, <span class="va">trans_shares</span> <span class="op">*</span> <span class="va">trans_pricepershare</span>, <span class="fl">0</span><span class="op">)</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span>  <span class="op">)</span>,</span>
+<span>  by <span class="op">=</span> <span class="va">month</span></span>
+<span><span class="op">]</span></span>
 <span><span class="va">ratio</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/pkg/data.table/man/assign.html" class="external-link">let</a></span><span class="op">(</span>sell_buy_ratio <span class="op">=</span> <span class="va">sell_usd</span> <span class="op">/</span> <span class="va">buy_usd</span><span class="op">)</span><span class="op">]</span></span>
 <span></span>
 <span><span class="fu">ggplot</span><span class="op">(</span><span class="va">ratio</span>, <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">month</span>, y <span class="op">=</span> <span class="va">sell_buy_ratio</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
@@ -205,7 +212,7 @@
 <span>    axis.text <span class="op">=</span> <span class="fu">element_text</span><span class="op">(</span>color <span class="op">=</span> <span class="st">"black"</span><span class="op">)</span>,</span>
 <span>    axis.title <span class="op">=</span> <span class="fu">element_blank</span><span class="op">(</span><span class="op">)</span></span>
 <span>  <span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">labs</span><span class="op">(</span>title <span class="op">=</span> <span class="st">"Insider sell/buy ratio by dollar volume (Q4 2025)"</span><span class="op">)</span></span></code></pre></div>
+<span>  <span class="fu">labs</span><span class="op">(</span>title <span class="op">=</span> <span class="st">"Insider sell/buy ratio by dollar volume (2025)"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="reference/figures/README-buy-sell-ratio-1.png" alt="" width="100%"></p>
 </div>
 <div class="section level3">
@@ -226,7 +233,7 @@
 <span>    axis.text <span class="op">=</span> <span class="fu">element_text</span><span class="op">(</span>color <span class="op">=</span> <span class="st">"black"</span><span class="op">)</span>,</span>
 <span>    axis.title <span class="op">=</span> <span class="fu">element_blank</span><span class="op">(</span><span class="op">)</span></span>
 <span>  <span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">labs</span><span class="op">(</span>title <span class="op">=</span> <span class="st">"Daily insider purchases by officers and directors (Q4 2025)"</span><span class="op">)</span></span></code></pre></div>
+<span>  <span class="fu">labs</span><span class="op">(</span>title <span class="op">=</span> <span class="st">"Daily insider purchases by officers and directors (2025)"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="reference/figures/README-daily-1.png" alt="" width="100%"></p>
 </div>
 <div class="section level3">

@@ -46,10 +46,10 @@ library(insidertrade)
 
 ### Bulk data
 
-Download and parse all Form 3/4/5 tables for Q4 2025:
+Download and parse all Form 3/4/5 tables for 2025:
 
 ``` r
-trans <- sec_transactions(2025, 4)
+trans <- sec_transactions(2025)
 ```
 
 ### Open-market purchases
@@ -59,7 +59,9 @@ the most informative signal for insider sentiment:
 
 ``` r
 buys <- trans[
-  trans_code == "P" & grepl("Officer|Director", rptowner_relationship)
+  trans_code == "P" &
+    grepl("Officer|Director", rptowner_relationship) &
+    trans_date >= "2025-01-01" & trans_date <= "2025-12-31"
 ]
 buys[, let(value = trans_shares * trans_pricepershare)]
 ```
@@ -75,23 +77,23 @@ top <- buys[,
 ]
 setorder(top, -n_insiders, -total_usd)
 head(top, 10)
-#>     ticker                           company n_insiders   total_usd
-#>     <char>                            <char>      <int>       <num>
-#>  1:    CBC          Central Bancompany, Inc.         17   5104827.0
-#>  2:   MTDR              Matador Resources Co         13   1522756.2
-#>  3:    VAC MARRIOTT VACATIONS WORLDWIDE Corp         12  18231582.0
-#>  4:   HYNE               Hoyne Bancorp, Inc.         10   2428915.6
-#>  5:    OBK              Origin Bancorp, Inc.         10   1023668.6
-#>  6:    SPG     SIMON PROPERTY GROUP INC /DE/         10    394399.9
-#>  7:    CRM                  Salesforce, Inc.          9 200626167.0
-#>  8: PHXE.P           Phoenix Energy One, LLC          9    410000.0
-#>  9:    LAB            STANDARD BIOTOOLS INC.          8 115266000.0
-#> 10:   ZBIO             Zenas BioPharma, Inc.          8  34252652.3
+#>     ticker                           company n_insiders  total_usd
+#>     <char>                            <char>      <int>      <num>
+#>  1:   ACTU        ACTUATE THERAPEUTICS, INC.         24   11999904
+#>  2:   EFSI      EAGLE FINANCIAL SERVICES INC         21     596869
+#>  3:   ALKT           ALKAMI TECHNOLOGY, INC.         19  534703590
+#>  4:    CBC          Central Bancompany, Inc.         17    5104827
+#>  5:   MTDR              Matador Resources Co         17    4647941
+#>  6:   KYMR         Kymera Therapeutics, Inc.         16 1347604988
+#>  7:   AVBH           Avidbank Holdings, Inc.         16    3488755
+#>  8:   WSBC                      WESBANCO INC         15    1556841
+#>  9:    VAC MARRIOTT VACATIONS WORLDWIDE Corp         14  222259811
+#> 10:    HPP   Hudson Pacific Properties, Inc.         14    2564984
 ```
 
 ### Cluster buys
 
-Identify stocks where 3 or more insiders bought within the quarter — a
+Identify stocks where 3 or more insiders bought within the year — a
 strong bullish signal:
 
 ``` r
@@ -106,30 +108,30 @@ cluster <- buys[,
 ][n_insiders >= 3L]
 setorder(cluster, -n_insiders, -total_usd)
 head(cluster, 10)
-#>     ticker                           company n_insiders   total_usd  first_buy
-#>     <char>                            <char>      <int>       <num>     <Date>
-#>  1:    CBC          Central Bancompany, Inc.         17   5104827.0 2025-11-21
-#>  2:   MTDR              Matador Resources Co         13   1522756.2 2025-10-30
-#>  3:    VAC MARRIOTT VACATIONS WORLDWIDE Corp         12  18231582.0 2025-11-13
-#>  4:   HYNE               Hoyne Bancorp, Inc.         10   2428915.6 2025-12-03
-#>  5:    OBK              Origin Bancorp, Inc.         10   1023668.6 2025-10-27
-#>  6:    SPG     SIMON PROPERTY GROUP INC /DE/         10    394399.9 2025-09-30
-#>  7:    CRM                  Salesforce, Inc.          9 200626167.0 2025-12-05
-#>  8: PHXE.P           Phoenix Energy One, LLC          9    410000.0 2025-09-29
-#>  9:    LAB            STANDARD BIOTOOLS INC.          8 115266000.0 2025-11-07
-#> 10:   ZBIO             Zenas BioPharma, Inc.          8  34252652.3 2024-09-13
+#>     ticker                           company n_insiders  total_usd  first_buy
+#>     <char>                            <char>      <int>      <num>     <Date>
+#>  1:   ACTU        ACTUATE THERAPEUTICS, INC.         24   11999904 2025-06-27
+#>  2:   EFSI      EAGLE FINANCIAL SERVICES INC         21     596869 2025-02-07
+#>  3:   ALKT           ALKAMI TECHNOLOGY, INC.         19  534703590 2025-05-15
+#>  4:    CBC          Central Bancompany, Inc.         17    5104827 2025-11-21
+#>  5:   MTDR              Matador Resources Co         17    4647941 2025-02-21
+#>  6:   KYMR         Kymera Therapeutics, Inc.         16 1347604988 2025-06-30
+#>  7:   AVBH           Avidbank Holdings, Inc.         16    3488755 2025-08-07
+#>  8:   WSBC                      WESBANCO INC         15    1556841 2025-05-22
+#>  9:    VAC MARRIOTT VACATIONS WORLDWIDE Corp         14  222259811 2025-03-04
+#> 10:    HPP   Hudson Pacific Properties, Inc.         14    2564984 2025-06-12
 #>       last_buy
 #>         <Date>
-#>  1: 2025-11-21
-#>  2: 2025-11-06
-#>  3: 2025-11-25
-#>  4: 2025-12-05
-#>  5: 2025-11-04
-#>  6: 2025-09-30
-#>  7: 2025-12-17
-#>  8: 2025-09-29
-#>  9: 2025-12-04
-#> 10: 2025-10-09
+#>  1: 2025-06-27
+#>  2: 2025-07-31
+#>  3: 2025-08-13
+#>  4: 2025-11-21
+#>  5: 2025-11-06
+#>  6: 2025-12-11
+#>  7: 2025-08-08
+#>  8: 2025-10-30
+#>  9: 2025-11-25
+#> 10: 2025-06-12
 ```
 
 ### Buy/sell ratio
@@ -140,14 +142,19 @@ indicator. High sell ratios historically correlate with market tops:
 ``` r
 library(ggplot2)
 
-open_market <- trans[trans_code %in% c("P", "S")]
+open_market <- trans[
+  trans_code %in% c("P", "S") & trans_date >= "2025-01-01" & trans_date <= "2025-12-31"
+]
 open_market[, let(month = as.Date(format(trans_date, "%Y-%m-01")))]
-ratio <- open_market[, .(
-  n_buys = sum(trans_code == "P"),
-  n_sells = sum(trans_code == "S"),
-  buy_usd = sum(fifelse(trans_code == "P", trans_shares * trans_pricepershare, 0), na.rm = TRUE),
-  sell_usd = sum(fifelse(trans_code == "S", trans_shares * trans_pricepershare, 0), na.rm = TRUE)
-), by = month]
+ratio <- open_market[,
+  .(
+    n_buys = sum(trans_code == "P"),
+    n_sells = sum(trans_code == "S"),
+    buy_usd = sum(fifelse(trans_code == "P", trans_shares * trans_pricepershare, 0), na.rm = TRUE),
+    sell_usd = sum(fifelse(trans_code == "S", trans_shares * trans_pricepershare, 0), na.rm = TRUE)
+  ),
+  by = month
+]
 ratio[, let(sell_buy_ratio = sell_usd / buy_usd)]
 
 ggplot(ratio, aes(x = month, y = sell_buy_ratio)) +
@@ -162,7 +169,7 @@ ggplot(ratio, aes(x = month, y = sell_buy_ratio)) +
     axis.text = element_text(color = "black"),
     axis.title = element_blank()
   ) +
-  labs(title = "Insider sell/buy ratio by dollar volume (Q4 2025)")
+  labs(title = "Insider sell/buy ratio by dollar volume (2025)")
 ```
 
 ![](reference/figures/README-buy-sell-ratio-1.png)
@@ -184,7 +191,7 @@ ggplot(daily, aes(x = trans_date, y = n_purchases)) +
     axis.text = element_text(color = "black"),
     axis.title = element_blank()
   ) +
-  labs(title = "Daily insider purchases by officers and directors (Q4 2025)")
+  labs(title = "Daily insider purchases by officers and directors (2025)")
 ```
 
 ![](reference/figures/README-daily-1.png)
