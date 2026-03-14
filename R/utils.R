@@ -39,7 +39,7 @@ sec_cache_clear <- function() {
   invisible()
 }
 
-sec_perform <- function(url) {
+sec_user_agent <- function() {
   ua <- getOption("insidertrade.user_agent")
   if (is.null(ua)) {
     stop(
@@ -48,8 +48,12 @@ sec_perform <- function(url) {
       call. = FALSE
     )
   }
+  ua
+}
+
+sec_perform <- function(url) {
   req <- request(url) |>
-    req_user_agent(ua)
+    req_user_agent(sec_user_agent())
   if (isTRUE(getOption("insidertrade.cache", FALSE))) {
     req <- req_cache(
       req,
