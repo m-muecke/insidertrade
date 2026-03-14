@@ -15,6 +15,7 @@ reference:
 - title: EDGAR API
   desc: Query the SEC EDGAR submissions API.
   contents:
+  - edgar_form4
   - edgar_submissions
   - edgar_insider_filings
   - sec_tickers

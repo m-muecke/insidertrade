@@ -10,5 +10,6 @@
 "_PACKAGE"
 
 #' @import data.table
-#' @importFrom httr2 req_cache request req_perform req_user_agent resp_body_json
+#' @importFrom httr2 req_cache request req_perform req_user_agent resp_body_json resp_body_xml
+#' @importFrom xml2 xml_find_all xml_find_first xml_text
 NULL

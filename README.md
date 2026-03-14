@@ -113,20 +113,21 @@ from EDGAR:
 ``` r
 tickers <- sec_tickers()
 cik <- tickers[ticker == "AAPL", cik]
-edgar_insider_filings(cik)
+filings <- edgar_insider_filings(cik)
+filings
 #>           accessionnumber filing_date reportdate acceptance_datetime    act
 #>                    <char>      <Date>     <char>              <POSc> <char>
-#>   1: 0001780525-26-000003  2026-03-06 2026-03-01 2026-03-06 18:30:51       
-#>   2: 0001059235-26-000004  2026-02-26 2026-02-24 2026-02-26 18:34:19       
-#>   3: 0001216519-26-000004  2026-02-26 2026-02-24 2026-02-26 18:33:49       
-#>   4: 0001179864-26-000004  2026-02-26 2026-02-24 2026-02-26 18:33:14       
-#>   5: 0001214128-26-000004  2026-02-26 2026-02-24 2026-02-26 18:32:41       
-#>  ---                                                                       
-#> 604: 0001181431-15-004549  2015-03-12 2015-03-10 2015-03-12 18:34:12       
-#> 605: 0001181431-15-004548  2015-03-12 2015-03-10 2015-03-12 18:33:47       
-#> 606: 0001181431-15-004547  2015-03-12 2015-03-10 2015-03-12 18:33:20       
-#> 607: 0001181431-15-004546  2015-03-12 2015-03-10 2015-03-12 18:32:46       
-#> 608: 0001181431-15-004545  2015-03-12 2015-03-10 2015-03-12 18:32:12       
+#>   1: 0001780525-26-000003  2026-03-06 2026-03-01 2026-03-06 18:30:51
+#>   2: 0001059235-26-000004  2026-02-26 2026-02-24 2026-02-26 18:34:19
+#>   3: 0001216519-26-000004  2026-02-26 2026-02-24 2026-02-26 18:33:49
+#>   4: 0001179864-26-000004  2026-02-26 2026-02-24 2026-02-26 18:33:14
+#>   5: 0001214128-26-000004  2026-02-26 2026-02-24 2026-02-26 18:32:41
+#>  ---
+#> 604: 0001181431-15-004549  2015-03-12 2015-03-10 2015-03-12 18:34:12
+#> 605: 0001181431-15-004548  2015-03-12 2015-03-10 2015-03-12 18:33:47
+#> 606: 0001181431-15-004547  2015-03-12 2015-03-10 2015-03-12 18:33:20
+#> 607: 0001181431-15-004546  2015-03-12 2015-03-10 2015-03-12 18:32:46
+#> 608: 0001181431-15-004545  2015-03-12 2015-03-10 2015-03-12 18:32:12
 #>        form filenumber filmnumber  items core_type   size isxbrl isinlinexbrl
 #>      <char>     <char>     <char> <char>    <char>  <int>  <int>        <int>
 #>   1:      3                                      3 490535      0            0
@@ -134,7 +135,7 @@ edgar_insider_filings(cik)
 #>   3:      4                                      4   5760      0            0
 #>   4:      4                                      4   5734      0            0
 #>   5:      4                                      4   7816      0            0
-#>  ---                                                                         
+#>  ---
 #> 604:      4                                      4   5481      0            0
 #> 605:      4                                      4   5481      0            0
 #> 606:      4                                      4   5499      0            0
@@ -147,12 +148,28 @@ edgar_insider_filings(cik)
 #>   3: xslF345X05/wk-form4_1772148826.xml                                 FORM 4
 #>   4: xslF345X05/wk-form4_1772148791.xml                                 FORM 4
 #>   5: xslF345X05/wk-form4_1772148758.xml                                 FORM 4
-#>  ---                                                                          
+#>  ---
 #> 604:           xslF345X03/rrd423481.xml     2015.03.10 IGER FORM 4 - RSU GRANT
 #> 605:           xslF345X03/rrd423482.xml     2015.03.10 JUNG FORM 4 - RSU GRANT
 #> 606:           xslF345X03/rrd423483.xml 2015.03.10 LEVINSON FORM 4 - RSU GRANT
 #> 607:           xslF345X03/rrd423484.xml    2015.03.10 SUGAR FORM 4 - RSU GRANT
 #> 608:           xslF345X03/rrd423485.xml   2015.03.10 WAGNER FORM 4 - RSU GRANT
+```
+
+To see the actual transaction details, parse a Form 4 filing:
+
+``` r
+form4s <- filings[form == "4"]
+txns <- rbindlist(lapply(seq_len(min(5L, nrow(form4s))), function(i) {
+  edgar_form4(cik, form4s$accessionnumber[i], form4s$primarydocument[i])
+}))
+txns[, .(owner_name, transaction_date, transaction_code, security_title, shares, price_per_share)]
+#>           owner_name transaction_date transaction_code security_title shares
+#>               <char>           <Date>           <char>         <char>  <num>
+#> 1: LEVINSON ARTHUR D       2026-02-26                G   Common Stock   1113
+#>    price_per_share
+#>              <num>
+#> 1:               0
 ```
 
 ## Related work

@@ -1,5 +1,6 @@
 # insidertrade (development version)
 
+* `edgar_form4()` fetches and parses a Form 4 XML filing from EDGAR, returning non-derivative transactions as a data.table.
 * `edgar_insider_filings()` filters EDGAR submissions to Forms 3, 4, and 5.
 * `edgar_submissions()` fetches company filing metadata from the EDGAR API.
 * `sec_tickers()` fetches the full CIK-to-ticker mapping from the SEC.

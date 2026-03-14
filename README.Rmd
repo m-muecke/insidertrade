@@ -100,7 +100,19 @@ You can also look up companies by ticker and fetch their insider filings from ED
 #| label: edgar
 tickers <- sec_tickers()
 cik <- tickers[ticker == "AAPL", cik]
-edgar_insider_filings(cik)
+filings <- edgar_insider_filings(cik)
+filings
+```
+
+To see the actual transaction details, parse a Form 4 filing:
+
+```{r}
+#| label: form4
+form4s <- filings[form == "4"]
+txns <- rbindlist(lapply(seq_len(min(5L, nrow(form4s))), function(i) {
+  edgar_form4(cik, form4s$accessionnumber[i], form4s$primarydocument[i])
+}))
+txns[, .(owner_name, transaction_date, transaction_code, security_title, shares, price_per_share)]
 ```
 
 ## Related work

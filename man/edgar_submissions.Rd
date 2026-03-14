@@ -30,6 +30,7 @@ filings <- edgar_submissions(320193)
 }
 \seealso{
 Other EDGAR: 
+\code{\link{edgar_form4}()},
 \code{\link{edgar_insider_filings}()},
 \code{\link{sec_tickers}()}
 }

@@ -25,6 +25,7 @@ tickers[ticker == "AAPL"]
 }
 \seealso{
 Other EDGAR: 
+\code{\link{edgar_form4}()},
 \code{\link{edgar_insider_filings}()},
 \code{\link{edgar_submissions}()}
 }
