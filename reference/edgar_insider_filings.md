@@ -30,6 +30,7 @@ with one row per insider filing.
 ## See also
 
 Other EDGAR:
+[`edgar_form4()`](https://m-muecke.github.io/insidertrade/reference/edgar_form4.md),
 [`edgar_submissions()`](https://m-muecke.github.io/insidertrade/reference/edgar_submissions.md),
 [`sec_tickers()`](https://m-muecke.github.io/insidertrade/reference/sec_tickers.md)
 

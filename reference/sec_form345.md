@@ -54,14 +54,16 @@ Other bulk data:
 # \donttest{
 # Get all tables for Q2 2024
 data <- sec_form345(2024, 2)
+#> Error in sec_user_agent(): could not find function "sec_user_agent"
 names(data)
-#> [1] "deriv_holding"    "deriv_trans"      "footnotes"        "nonderiv_holding"
-#> [5] "nonderiv_trans"   "owner_signature"  "reportingowner"   "submission"      
+#> NULL
 
 # Get only the submission table
 sub <- sec_form345(2024, 2, "submission")
+#> Error in sec_user_agent(): could not find function "sec_user_agent"
 
 # Get a full year of transactions
 trans <- sec_form345(2024, table = "nonderiv_trans")
+#> Error in sec_user_agent(): could not find function "sec_user_agent"
 # }
 ```

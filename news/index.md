@@ -2,6 +2,9 @@
 
 ## insidertrade (development version)
 
+- [`edgar_form4()`](https://m-muecke.github.io/insidertrade/reference/edgar_form4.md)
+  fetches and parses a Form 4 XML filing from EDGAR, returning
+  non-derivative transactions as a data.table.
 - [`edgar_insider_filings()`](https://m-muecke.github.io/insidertrade/reference/edgar_insider_filings.md)
   filters EDGAR submissions to Forms 3, 4, and 5.
 - [`edgar_submissions()`](https://m-muecke.github.io/insidertrade/reference/edgar_submissions.md)

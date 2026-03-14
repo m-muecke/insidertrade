@@ -15,6 +15,8 @@ Download and parse SEC Form 3/4/5 quarterly bulk data sets.
 
 Query the SEC EDGAR submissions API.
 
+- [`edgar_form4()`](https://m-muecke.github.io/insidertrade/reference/edgar_form4.md)
+  : Parse a Form 4 filing
 - [`edgar_submissions()`](https://m-muecke.github.io/insidertrade/reference/edgar_submissions.md)
   : EDGAR company submissions
 - [`edgar_insider_filings()`](https://m-muecke.github.io/insidertrade/reference/edgar_insider_filings.md)

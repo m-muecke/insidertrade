@@ -21,6 +21,7 @@ with columns `cik`, `ticker`, and `title`.
 ## See also
 
 Other EDGAR:
+[`edgar_form4()`](https://m-muecke.github.io/insidertrade/reference/edgar_form4.md),
 [`edgar_insider_filings()`](https://m-muecke.github.io/insidertrade/reference/edgar_insider_filings.md),
 [`edgar_submissions()`](https://m-muecke.github.io/insidertrade/reference/edgar_submissions.md)
 

@@ -30,6 +30,7 @@ with one row per filing, containing columns such as `accession_number`,
 ## See also
 
 Other EDGAR:
+[`edgar_form4()`](https://m-muecke.github.io/insidertrade/reference/edgar_form4.md),
 [`edgar_insider_filings()`](https://m-muecke.github.io/insidertrade/reference/edgar_insider_filings.md),
 [`sec_tickers()`](https://m-muecke.github.io/insidertrade/reference/sec_tickers.md)
 
