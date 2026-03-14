@@ -2,7 +2,7 @@ Package: insidertrade
 Title: SEC Insider Trading Transactions
 Version: 0.0.0.9000
 Authors@R:
-    person("Maximilian", "Muecke", , "muecke.maximilian@gmail.com", role = c("aut", "cre"),
+    person("Maximilian", "Mücke", , "muecke.maximilian@gmail.com", role = c("aut", "cre"),
            comment = c(ORCID = "0009-0000-9432-9795"))
 Description: Download and parse SEC insider trading data (Forms 3/4/5) from quarterly bulk
     data sets and the EDGAR submissions API.
