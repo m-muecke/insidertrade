@@ -19,8 +19,8 @@ Returns a lookup table mapping SEC transaction codes to human-readable descripti
 sec_transaction_codes()
 }
 \seealso{
-Other bulk data: 
-\code{\link{sec_form345}()},
-\code{\link{sec_transactions}()}
+Other bulk data:
+\code{\link[=sec_form345]{sec_form345()}},
+\code{\link[=sec_transactions]{sec_transactions()}}
 }
 \concept{bulk data}

@@ -29,9 +29,9 @@ insider <- edgar_insider_filings(320193)
 \dontshow{\}) # examplesIf}
 }
 \seealso{
-Other EDGAR: 
-\code{\link{edgar_form4}()},
-\code{\link{edgar_submissions}()},
-\code{\link{sec_tickers}()}
+Other EDGAR:
+\code{\link[=edgar_form4]{edgar_form4()}},
+\code{\link[=edgar_submissions]{edgar_submissions()}},
+\code{\link[=sec_tickers]{sec_tickers()}}
 }
 \concept{EDGAR}

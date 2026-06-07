@@ -45,8 +45,8 @@ trans <- sec_form345(2024, table = "nonderiv_trans")
 \dontshow{\}) # examplesIf}
 }
 \seealso{
-Other bulk data: 
-\code{\link{sec_transaction_codes}()},
-\code{\link{sec_transactions}()}
+Other bulk data:
+\code{\link[=sec_transaction_codes]{sec_transaction_codes()}},
+\code{\link[=sec_transactions]{sec_transactions()}}
 }
 \concept{bulk data}

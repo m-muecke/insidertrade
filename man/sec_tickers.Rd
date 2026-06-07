@@ -24,9 +24,9 @@ tickers[ticker == "AAPL"]
 \dontshow{\}) # examplesIf}
 }
 \seealso{
-Other EDGAR: 
-\code{\link{edgar_form4}()},
-\code{\link{edgar_insider_filings}()},
-\code{\link{edgar_submissions}()}
+Other EDGAR:
+\code{\link[=edgar_form4]{edgar_form4()}},
+\code{\link[=edgar_insider_filings]{edgar_insider_filings()}},
+\code{\link[=edgar_submissions]{edgar_submissions()}}
 }
 \concept{EDGAR}

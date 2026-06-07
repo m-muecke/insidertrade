@@ -64,9 +64,9 @@ txn <- edgar_form4(
 \dontshow{\}) # examplesIf}
 }
 \seealso{
-Other EDGAR: 
-\code{\link{edgar_insider_filings}()},
-\code{\link{edgar_submissions}()},
-\code{\link{sec_tickers}()}
+Other EDGAR:
+\code{\link[=edgar_insider_filings]{edgar_insider_filings()}},
+\code{\link[=edgar_submissions]{edgar_submissions()}},
+\code{\link[=sec_tickers]{sec_tickers()}}
 }
 \concept{EDGAR}
