@@ -18,6 +18,7 @@ You can install the development version from
 [GitHub](https://github.com/) with:
 
 ``` r
+
 # install.packages("pak")
 pak::pak("m-muecke/insidertrade")
 ```
@@ -28,18 +29,21 @@ The SEC requires a valid User-Agent with contact information for all API
 requests. Set this once per session before making any calls:
 
 ``` r
+
 options(insidertrade.user_agent = "your@email.com")
 ```
 
 Optionally, enable caching to avoid re-downloading data:
 
 ``` r
+
 options(insidertrade.cache = TRUE)
 ```
 
 ## Usage
 
 ``` r
+
 library(data.table)
 library(insidertrade)
 ```
@@ -49,6 +53,7 @@ library(insidertrade)
 Download and parse all Form 3/4/5 tables for 2025:
 
 ``` r
+
 trans <- sec_transactions(2025)
 ```
 
@@ -58,6 +63,7 @@ Filter to open-market purchases (code `"P"`) by officers and directors —
 the most informative signal for insider sentiment:
 
 ``` r
+
 buys <- trans[
   trans_code == "P" &
     grepl("Officer|Director", rptowner_relationship) &
@@ -71,6 +77,7 @@ buys[, let(value = trans_shares * trans_pricepershare)]
 Rank companies by the number of distinct insider buyers:
 
 ``` r
+
 top <- buys[,
   .(n_insiders = uniqueN(rptownercik), total_usd = sum(value, na.rm = TRUE)),
   by = .(ticker = issuertradingsymbol, company = issuername)
@@ -97,6 +104,7 @@ Identify stocks where 3 or more insiders bought within the year — a
 strong bullish signal:
 
 ``` r
+
 cluster <- buys[,
   .(
     n_insiders = uniqueN(rptownercik),
@@ -140,6 +148,7 @@ Compute the market-wide buy/sell ratio by month — a classic contrarian
 indicator. High sell ratios historically correlate with market tops:
 
 ``` r
+
 library(ggplot2)
 
 open_market <- trans[
@@ -172,6 +181,7 @@ ggplot(ratio, aes(x = month, y = sell_buy_ratio)) +
 ### Daily purchase activity
 
 ``` r
+
 daily <- buys[, .(n_purchases = .N, total_usd = sum(value, na.rm = TRUE)), by = trans_date]
 
 ggplot(daily, aes(x = trans_date, y = n_purchases)) +
@@ -196,6 +206,7 @@ ggplot(daily, aes(x = trans_date, y = n_purchases)) +
 Look up a company by ticker and fetch their insider filings:
 
 ``` r
+
 tickers <- sec_tickers()
 cik <- tickers[ticker == "AAPL", cik]
 filings <- edgar_insider_filings(cik)
@@ -247,6 +258,7 @@ Parse the Form 4 XML to see the actual transactions — what was traded,
 how many shares, and at what price:
 
 ``` r
+
 form4s <- filings[form == "4"]
 txns <- rbindlist(lapply(seq_len(min(10L, nrow(form4s))), function(i) {
   edgar_form4(cik, form4s$accessionnumber[i], form4s$primarydocument[i])
