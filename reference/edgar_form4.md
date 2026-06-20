@@ -123,7 +123,7 @@ Other EDGAR:
 # \donttest{
 # first get insider filings for Apple Inc.
 filings <- edgar_insider_filings(320193)
-#> Error in setDT(lapply(recent, unlist)): All elements in argument 'x' to 'setDT' must be of equal length, but input 14 has length 15 whereas the first non-empty input had length 1000
+#> Error in setDT(lapply(recent, unlist)): All elements in argument 'x' to 'setDT' must be of equal length, but input 14 has length 17 whereas the first non-empty input had length 1000
 form4s <- filings[form == "4"]
 #> Error: object 'filings' not found
 
