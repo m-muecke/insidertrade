@@ -32,9 +32,9 @@ sec_cache_dir <- function() {
 #' @rdname cache
 #' @export
 sec_cache_clear <- function() {
-  dir <- sec_cache_dir()
-  if (dir.exists(dir)) {
-    unlink(dir, recursive = TRUE)
+  cache_dir <- sec_cache_dir()
+  if (dir.exists(cache_dir)) {
+    unlink(cache_dir, recursive = TRUE)
   }
   invisible()
 }
@@ -70,12 +70,4 @@ sec_download <- function(url, destfile) {
   curl::handle_setheaders(h, `User-Agent` = sec_user_agent())
   curl::curl_download(url, destfile, handle = h)
   destfile
-}
-
-parse_sec_date <- function(x) {
-  as.Date(x, "%d-%B-%Y")
-}
-
-`%||%` <- function(x, y) {
-  if (is.null(x)) y else x # nolint
 }

@@ -22,7 +22,10 @@ edgar_submissions <- function(cik) {
 
   body <- resp_body_json(sec_perform(url))
   recent <- body$filings$recent
-  dt <- setDT(lapply(recent, unlist))
+  dt <- setDT(lapply(recent, function(col) {
+    col[lengths(col) == 0L] <- NA
+    unlist(col)
+  }))
   setnames(dt, tolower)
 
   setnames(dt, c("filingdate", "acceptancedatetime"), c("filing_date", "acceptance_datetime"))

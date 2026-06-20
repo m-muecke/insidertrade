@@ -110,7 +110,7 @@ parse_form345_table <- function(dt, table_name) {
   )
   date_cols <- intersect(date_cols, names(dt))
   if (length(date_cols)) {
-    dt[, (date_cols) := lapply(.SD, parse_sec_date), .SDcols = date_cols]
+    dt[, (date_cols) := lapply(.SD, \(x) as.Date(x, "%d-%B-%Y")), .SDcols = date_cols]
   }
   dt
 }
